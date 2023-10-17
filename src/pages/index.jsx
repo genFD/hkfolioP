@@ -250,10 +250,10 @@ export default function Home({ articles }) {
   return (
     <>
       <Head>
-        <title>Hermann Kanga - Software developer</title>
+        <title>Hermann - Software developer</title>
         <meta
           name="description"
-          content="I’m Hermann Kanga, a software developer and entrepreneur based in Montreal."
+          content="I’m Hermann, a software developer and entrepreneur based in Montreal."
         />
       </Head>
       <Container className="mt-9">
@@ -265,8 +265,8 @@ export default function Home({ articles }) {
             Tech enthusiast and aspiring entrepreneur.
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I’m Hermann Kanga, a software developer and aspiring entrepreneur
-            based in Montreal. <br />I build web things <span></span>
+            I’m Hermann, a software developer and aspiring entrepreneur based in
+            Montreal. <br />I build web things <span></span>
             <span className="font-fontmono text-base font-bold text-zinc-600 text-teal-500">
               end-to-end from design through deployment.
             </span>{' '}
