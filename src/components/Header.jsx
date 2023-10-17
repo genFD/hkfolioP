@@ -7,7 +7,7 @@ import clsx from 'clsx'
 
 import { Container } from '@/components/Container'
 import avatarImage from '@/images/avatara.png'
-import round from '@/images/round-shaped.png'
+import round from '@/images/round-teal.png'
 
 function CloseIcon(props) {
   return (

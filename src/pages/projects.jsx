@@ -7,18 +7,17 @@ import logoAnimaginary from '@/images/logos/animaginary.svg'
 import logoCosmos from '@/images/logos/cosmos.svg'
 import logoHelioStream from '@/images/logos/helio-stream.svg'
 import logoOpenShuttle from '@/images/logos/open-shuttle.svg'
-import logoPlanetaria from '@/images/logos/planetaria.svg'
+import logoWildOasis from '@/images/logos/logo-dark.png'
 
 const projects = [
   {
-    name: 'Planetaria',
-    description:
-      'Creating technology to empower civilians to explore space on their own terms.',
+    name: 'Wild Oasis',
+    description: 'Booking application built with Supabase and React.',
     link: {
-      href: 'https://github.com/hermkan/frontend-feedbacks',
-      label: 'feedbacks.tech',
+      href: 'https://github.com/genFD/react-part-IV-projects/tree/main/02-The%20Wild%20Oasis',
+      label: 'Wild Oasis',
     },
-    logo: logoPlanetaria,
+    logo: logoWildOasis,
   },
   {
     name: 'Animaginary',
@@ -68,12 +67,13 @@ export default function Projects() {
         <title>Projects - Spencer Sharp</title>
         <meta
           name="description"
-          content="Things I’ve made trying to put my dent in the universe."
+          content="Things I’ve made trying to perfect my coding skills."
         />
       </Head>
       <SimpleLayout
-        title="Things I’ve made trying to put my dent in the universe."
-        intro="I’ve worked on tons of little projects over the years but these are the ones that I’m most proud of. Many of them are open-source, so if you see something that piques your interest, check out the code and contribute if you have ideas for how it can be improved."
+        title="Things I’ve made trying to perfect my coding skills."
+        intro="I’ve worked on tons of little projects over the years
+          but these are the ones that I’m most proud of. Many of them are open-source, so if you see something that piques your interest, check out the code and contribute if you have ideas for how it can be improved."
       >
         <ul
           role="list"
