@@ -1,0 +1,390 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import Illustration from './illustration.png'
+import fullstack from './fullstack.png'
+import stack from './stack.png'
+import commands from './commands.png'
+import vim from './vim.png'
+import vimeditor from './vimeditor.png'
+import index from './index.png'
+import helloworld from './helloworld2.png'
+import dashboard from './dashboard.png'
+import newproject from './create-project.png'
+import droplet from './droplet.png'
+import dropletlandpage from './droplet-landpage.png'
+import datacenter from './data-center.png'
+import linuxdistros from './linux-distros.png'
+import os from './os.png'
+import cpu from './cpu.png'
+import hash from './hash.png'
+
+export const meta = {
+  author: 'Hermann Kanga',
+  date: '2022-09-05',
+  title: 'An overview of Full stack developement',
+  description:
+    'We’ll dive deep into servers, work with the command line, understand networking and security, set up continuous integration and deployment, manage databases, and build containers.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+Part I
+
+In this two (2) parts article, we will learn what full-stack engineering means. We will also get hands-on with setting up our own server to build and deploy web applications from scratch.
+
+<Image src={Illustration} alt="" />
+
+We’ll dive deep into servers, work with the command line, understand networking and security, set up continuous integration and deployment, manage databases, and build containers. The goal is to get some familiarity with the entire process, from the terminal all the way to building a web application hooked up to our own server.
+
+## 📖 Table of contents
+
+Part I:
+
+- What is a full stack engineering ?
+- Command Line
+- Servers
+- Operating Systems
+- The internet
+
+Part 2:
+
+- Application setup
+- Git
+- Continous Integration and Deployment
+- Realtime & Databases
+- Containers
+
+## What is a full stack engineering?
+
+Before we answer that question, let's talk about **modern computing**.<br/>
+Modern computing can be break down into three components :
+
+1. The UI : The visible part, the user interface a user interacts with (browser, mobile devices, desktop, etc..)
+2. The Server : Mainly responsible for sending data (APIs), but servers can also handle other tasks like logging, authentication etc..
+3. The Database : Where the data is stored. Database are also useful for **data analytics**.
+
+<Image src={fullstack} alt="" />
+
+Full stack engineering deals with not only the challenges of building a user interface but also everything else (database, server, etc..). <br/>
+Our goal today will be to cover the "everything else". We will see that
+the relationship between a server and a user interface is complex, there are a lot of rules to follow and a staggering amount of technologies that goes into allowing us to build user interfaces.
+Gaining this knowledge will give us not only the confidence to understand any system, but also the ability to put them together to create robust web applications.
+
+The plan is as follows:
+
+- A deep dive into servers and networking
+- Database overview
+- Understand how the internet works
+- Understand the relationship between all those systems
+
+An example of a few popular stack :
+
+<Image src={stack} alt="" />
+
+## The command line
+
+A computer’s filesystem organizes the data stored by a computer, so that it can be easily retrieved by the user. Files are generally represented in a tree-like structure, in which any parent directory can have any number of children. The root directory is then found at the base of the tree.
+
+The command line allows a user to navigate the filesystem and run built-in programs or custom scripts. In Unix, the command line interface is called **Bash**, and the shell prompt is the `$` (dollar sign).
+
+### Create, view files
+
+The reason why we want to talk about the command line is that we are going to spend a lot of time in the terminal. The terminal is arguably the most fast and efficient way of talking to a computer.
+MacOs has a built in terminal but we are going to use [iterm2](https://iterm2.com/).<br/>
+
+Here are some common commands :
+
+- `pwd`: Print Working Directory. <br/>
+  The shell command `pwd` displays the file path from the root directory to the current working directory.
+
+```bash
+$ pwd
+/Users/sonny/Downloads
+```
+
+- `mkdir`: Make Directory <br/>
+  The shell command `mkdir` is used to make a new directory in the filesystem according to its argument. If a file path is given, the new directory will be placed at the end. Otherwise, it will create a new directory in the current working directory.
+
+```bash
+$ mkdir new-directory
+$ ls
+old-directory    new-directory
+```
+
+- `ls`: List
+  The shell command `ls` is used to list the contents of a directory. If no arguments are given, it will list the contents of the current working directory.
+
+```bash
+$ ls Desktop
+resume.pdf
+photo.png
+```
+
+- `cd`: Change Directory
+  The shell command `cd` is used to move throughout the filesystem of a computer. It accepts a variety of arguments: full file paths, names of children of the current directory, `..` the parent of the current directory
+
+```bash
+$ cd some-directory
+$ cd ..
+```
+
+- `touch`: Create New File
+  The shell command `touch` creates a new file in the current working directory with the name provided.
+
+```bash
+ $ touch grocery-list.txt
+```
+
+- Helper commands for the command line include:
+
+      - `clear` to clear the terminal
+      - `tab` to autocomplete the line
+      - `↑ `and `↓` to cycle through previous commands.
+
+### Editing files
+
+[Vim](https://www.vim.org/) is a screen-based text editor that is free, open-source, and based on the vi editor that was originally created for the Unix operating system. However, it can be run on other systems such as Windows, Mac, Linux, or Android.
+
+Developers will find it useful for working on source code or scripting files, but **Vim** is ideal for editing configuration files when working from the terminal.
+
+Here are the main features of the Vim editor:
+
+- Text completion for faster editing.
+- Ability to compare differences between files and merge them.
+- Ability to search with <a target="_blank" href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference">Regular expression</a>.
+- Ability to perform a wide range of tasks such as navigating to specific locations within a document, or replacing specific text, using a suite of commands.
+- Opening files in multiple tabs.
+- Creating macros to execute a sequence of commands.
+
+Vim has three modes of operation:
+
+- COMMAND MODE : Execute commands like undo, redo, find, replace, quit, etc.
+- INSERT MODE : Type and edit text.
+- VISUAL MODE : Highlight, select and edit text.
+
+Vim can be launched directly from the terminal by running the `vim` command.
+
+```bash
+vim
+```
+
+The start screen will look like this:
+
+<Image src={vim} alt="" />
+
+for exiting Vim on the terminal:
+
+```bash
+:q!
+```
+
+While this will close the current buffer, it will not save any changes made in the file. Here are some recommended safeguards :
+
+- `:!wq`: Closes the current file buffer and saves the changes.
+- `:!xa`: Saves all changes and exits Vim.
+- `!wqa`: Works the same as the `:!xa` command.
+- `:!qa`: Closes Vim without warning by ending all file buffers and not saving their changes.
+- `:qa`: Will not close Vim if there are any unsaved changes.
+
+A file named `filename.txt` can be opened in the Vim editor. If `filename.txt` does not exist, the file will be created:
+
+```bash
+vim filename.txt
+```
+
+check out these links to learn more about vim:
+
+- https://vim.fandom.com/wiki/All_the_right_moves
+- https://linuxmoz.com/vi-commands-cheat-sheet/
+- https://www.openvim.com/
+
+### Shell
+
+The shell is the actual application running in the terminal. The shell interprets the commands and converts them into a language that the OS can understand. OS X for mac users uses `zsh` these days which is a more extensible version of `bash`.
+Here are some common commands :
+
+- The shell command `echo $0` displays the current shell :
+
+```bash
+$ echo $0
+zsh
+```
+
+- The shell command `source <shell config location>` will reload the terminal. This is important when you modify you shell configuration.
+
+- The shell command `vi ~/.zshrc` will open the current shell configuration.
+
+Check out this <a target="_blank" href="https://ohmyz.sh/">link</a> for more information about terminal configuration
+
+## Servers
+
+> To complete this part, you will need: Node.js installed on your computer. <br /> We are using version 19.0.0. Check out this [link](https://nodejs.org/en/download) to Install Node.js.
+
+The next step after this brief overview of the command line is discussing servers.
+We are going to look at cloud computing, VPS, operating systems and SSH and hashing.
+
+### What is a server?
+
+A server is essentially a computer that listen and responds to requests coming over the network. However, we usually think of servers as **dedicated hardware** for a variety of reasons. The main reasons are :
+
+- **availability**: a server has to be available 100% of the time otherwise the webpage goes down, your users lose access to their service
+
+- **efficiency** : a server has to fast and reliable. A slow server can (...)
+
+Servers generally run on a different chipset than the one we use on our computers for different reasons like virtualization (more on that later when we get to cloud computing)or efficiency (more efficient than the home computer, this is why a server chip is very expensive.)
+
+### Creating a simple node.js server
+
+Let's try and create a very simple `node.js` server.
+
+1. In the terminal, let's run this command to create a file called `server.js` in vim :
+
+```bash
+vim server.js
+```
+
+This should open a vim editor like this :
+
+<Image src={vimeditor} alt="" />
+
+2. This is an example of the code we need to create a server in `Node.js ` :
+
+```js
+const http = require('http')
+const fs = require('fs')
+const PORT = 8000
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'content-type': 'text/html' })
+  fs.createReadStream('index.html').pipe(res)
+})
+
+server.listen(PORT)
+console.log(`server is listening to port ${PORT}`.)
+```
+
+- We used the `require()` method to include the `HTTP` module. The `HTTP` module is a built-in node module that allows `Node.js `to transfer data over the Hyper Text Transfer Protocol (HTTP).
+
+- `fs` is also built-in node module that allow us to work with the file system on the computer.
+  Common use for the file System module includes: Read files, Create files, Update files, Delete files, Rename files. We need the `fs` module because we are going to serve files.
+
+- We defined our Port : 8000 and save it in variable called `PORT`
+
+- The HTTP module can create an HTTP server that listens to server ports and gives a response back to the client. The `http.createServer()` method takes a function, that accepts two arguments `req` and `res` or request and response and returns a response. The response is an object with a lot of properties (more on that later) but for now, we are using the `writeHead()` method to write a header which is a part of a server response. Headers are metadata attached to the other part of the server response, the `body`. Headers can help us determine if a user is logged in or not, verify the cookies, or check the status code etc.. `200` is the `OK` HTTP status code and just to be as explicit as possible, we've added a second argument which is an object that helps the client determines the response data type, which is an` html` file.
+
+- Next, we created a read stream. Streams allow us to read from or write to a source continuously, thus eliminating the need to fit all the data in memory at once. With stream we can start processing data almost immediately instead of waiting for the entire payload making it a suitable tool for large data transfer.
+
+- The server is created and the function passed into `createServer()` will be executed when someone tries to access the computer on port `8000`. To open that port, we called the `listen()` method and passed into it our variable `PORT`.
+
+- finally, it's nice to know that the server is running, so we logged a message to the console.
+
+3. The last file we need is the `html` file that we can create running this command
+
+```bash
+vim index.html
+```
+
+.. and write a simple paragraph saying the "hello world"
+
+<Image src={index} alt="" />
+
+4. To run the server we can run the following command:
+
+```bash
+node server.js
+```
+
+if we open `localhost:8000` in the browser, we should see our html page :
+
+<Image src={helloworld} alt="" />
+
+### Server management
+
+We have a server up and running and it's serving an html page, but how can we scale it? how can we make it accessible and available for users all around the world? Also, what happens if the server goes down, how do we make sure we don't rely on only one server in case of a failure? All those questions need to be addressed in our server management strategy.
+
+Not so long ago, companies were running their own server farm in their basements. Nowadays for various reasons we moved into another direction : **cloud computing**. Cloud computing is the idea of a giant data center somewhere, where you can purchase resources from, depending on your need. Companies like [AWS](https://aws.amazon.com/console/), [Digital Ocean](https://www.digitalocean.com/), [Rackspace](https://www.rackspace.com/) etc.. offer a myriad of services that allow users to host their applications in the cloud and manage their servers more efficiently.
+
+The secret that makes cloud computing so valuable is the concept of **virtualization**. Virtualization is dividing a server resources into a virtual computer. A virtual computer is a digital version of a physical computer (the memory, the hardware, the GPU etc..). We don't tend to do that nowadays because of the complexity and the cost related to this process.
+What is more interesting is buying your own servers and scale them up and down depending on your need. It's called **VPS** or **Virtual Private Server** and most modern applications like **Netflix**, **Amazon** **Facebook** etc.. use **VPS**.
+
+### Buying a VPS
+
+So far, we've learned what a server does and how to create one locally. Let's
+try and purchase a virtual private server running in the cloud.
+
+In the browser, let's navigate to <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a>. After creating an account and you should land on a dashboard like this :
+
+<Image src={dashboard} alt="" />
+
+Let's create a new project :
+
+<Image src={newproject} alt="" />
+
+Digital ocean calls server droplets. So let's create a new droplet :
+
+<Image src={droplet} alt="" />
+
+You should land on a page like this :
+
+<Image src={dropletlandpage} alt="" />
+
+We are going to choose a region. This is important because we want to choose the closest region to where we think our visitors are going to be.
+
+Next we choose the data center :
+
+<Image src={datacenter} alt="" />
+
+For the operating system, we are going to choose **Ubuntu** , the LTS (LTS stands for long term support) version in 64 bit.
+
+An Operating system in the (at least in Unix terms) is made up of three components:
+
+<Image src={os} alt="" />
+
+- The program or utilities : `mkir`, `ls`, `rmdir` etc.. these are programs and utilities built in the operating system. With unix everything is either or file that you interact with or a process running. It's a very simple mental model.
+
+- The Kernel: main part of the operating system that communicates directly with the hardware.
+
+- The hardware.
+
+There are two basic types of operating systems :
+
+- Windows-based systems
+- Unix based systems
+
+As opposed to windows, Unix-based systems comes with multiple flavors. The three main subsets of Unix-based systems are :
+
+- Solaris
+- Linux
+- BSD
+
+Linux is probably the most popular operating systems. <br/> It's much more user-friendly, more accessible with a lot of built-in commands and highly customizable. Operating systems based on Linux are known as Linux distributions or distros. Examples include Debian, Ubuntu, Fedora, CentOS, Gentoo, Arch Linux, and many others.
+
+<Image src={linuxdistros} alt="" />
+
+One benefit of using Linux is that the commands we used on our terminal and the commands we're going to be using for our server are the same. At its core Ubuntu is Unix based system.
+
+Going back to [Digital Ocean](https://www.digitalocean.com/), for the the size of the cpu and the cpu options (computer power), we will choose Basic and regular at $4/mo.
+
+<Image src={cpu} alt="" />
+
+Finally, the authentication method, how do we get into the server? how do we connect into it? there are two options available :
+
+- Password
+- SSH keys.
+
+We will choose SSH keys. Username and password is not a safe option. they can be stolen and lost very easily, they can be be forgotten etc...
+SSH is one of the most secure option when it comes to server authentication.
+
+**How SSH Works**?
+
+SSH stands for Secure Shell. When you connect through SSH, you will be dropped into a shell session, For the duration of your SSH session, any commands that you type into your local terminal are sent through an encrypted SSH tunnel and executed on your server.
+
+**How SSH Authenticates Users**?
+
+**Hashing** is very important to understand SSH authentication.
+You can think of hashing as a sort of cryptographic blender: Data goes in, and a **hash** comes out based on that data, but if you’re given a hash, it’s mathematically impossible to reverse the algorithm and obtain the original data.
+
+In practice, we take some data which is just a string of bits and bytes, we run it through a mathematical function called a **hash function** and the output is called a **hash** (an alphanumeric string).
+There are different types of hash functions, take a look at the graph below :
+
+<Image src={hash} alt="" />

@@ -219,29 +219,41 @@ export default function Home({ articles }) {
         />
       </Head>
       <Container className="mt-9">
-        <div className="max-w-2xl">
+        <div className="max-w-2xl font-IBM">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-ccd6f6 sm:text-5xl">
             Software developer.
           </h1>
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-8892b0 sm:text-5xl">
             Tech enthusiast and aspiring entrepreneur.
           </h1>
-          <p className="mt-6 font-fontmono text-base text-zinc-600 dark:text-zinc-400 ">
+          <p className="mt-6 font-IBM text-lg text-zinc-600 dark:text-zinc-400 ">
             I’m Hermann, a software developer and aspiring entrepreneur based in
-            Montreal. I build web applications <span></span>
+            Montreal. <br /> I build web applications <span></span>
             <span className="text-base font-bold text-zinc-600 dark:text-teal-500">
               end-to-end from design through deployment.
             </span>{' '}
             I always try and stay up to date with technologies, but my favorite
-            stack to work with is :
+            stack is :
           </p>
-          <ul className="skills-list font-fontmono text-xs text-zinc-600 dark:text-zinc-400">
-            <li>Api layer: Rest API</li>
-            <li>Backend : Nestjs/Typescript</li>
-            <li>Web frontend : Typescript/React</li>
-            <li>Database: Postgres</li>
-            <li>Infrastructure : Terraform</li>
-            <li>Cloud provider : AWS/GCP/Azure</li>
+          <ul className="skills-list text-sm text-zinc-600 dark:text-zinc-400">
+            <li className="transition-colors duration-300 dark:hover:text-teal-500">
+              Api layer: Rest API
+            </li>
+            <li className="transition-colors duration-300  dark:hover:text-teal-500">
+              Backend : Nestjs/Typescript
+            </li>
+            <li className="transition-colors duration-300  dark:hover:text-teal-500">
+              Web frontend : Typescript/React
+            </li>
+            <li className="transition-colors duration-300  dark:hover:text-teal-500">
+              Database: Postgres
+            </li>
+            <li className="transition-colors duration-300  dark:hover:text-teal-500">
+              Infrastructure : Terraform
+            </li>
+            <li className="transition-colors duration-300  dark:hover:text-teal-500">
+              Cloud provider : AWS/GCP/Azure
+            </li>
           </ul>
           <div className="mt-6 flex gap-6">
             <SocialLink
@@ -253,7 +265,7 @@ export default function Home({ articles }) {
         </div>
       </Container>
       <Container className="mt-24 md:mt-28">
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
+        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 font-IBM lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
             {articles.map((article) => (
               <Article key={article.slug} article={article} />
@@ -277,7 +289,7 @@ export async function getStaticProps() {
   return {
     props: {
       articles: (await getAllArticles())
-        .slice(0, 4)
+        .slice(0, 3)
         .map(({ component, ...meta }) => meta),
     },
   }

@@ -1,0 +1,381 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import Illustration from './illustration.png'
+import dataModel from './data-model.jpg'
+export const meta = {
+  author: 'Hermann Kanga',
+  date: '2022-09-05',
+  title: 'How to build a professional React application?',
+  description:
+    'Multiple factors cause various changes during a project’s lifetime, such as changes in requirements, organization, technologies, and more. An application built on solid foundations will make it resilient to all those changes.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+<Image src={Illustration} alt="" />
+
+{/* I knew that to get it right I was going to have to replicate the viewing conditions of someone from the future, so I grabbed my space helmet from the closet, created a new Figma document, and got to work. */}
+
+## 📖 Table of contents
+
+- Benefits of having a good application architecture.
+- Exploring architectural challenges.
+- Understanding architectural decisions when building React applications.
+- Practice: Planning a job board application.
+
+## Benefits of having a good application architecture
+
+1. A good foundation for the project
+2. Easier project management
+3. Increased development speed and productivity
+4. Cost-effectiveness
+5. Better product quality
+
+### A good foundation for the project
+
+Multiple factors cause various changes during a project’s lifetime, such as changes in requirements, organization, technologies, and more. An application built on solid foundations will make it resilient to all those changes.
+
+### Easier project management
+
+Having different components organized properly will make **organizing** and **delegating** tasks much easier, especially if a larger team is involved.
+
+Good component decoupling will allow **better splitting of work** between teams and team members and **faster iterations** without team members being blocked by each other.
+
+It also allows **better estimates** to be made regarding how much time is required for a feature to be completed.
+
+### Increased development speed and productivity
+
+Having a good architecture defined allows developers to focus on the product they are building without overthinking the technical implementations since most of the technical decisions should have already been made.
+
+It will also provide a **smoother onboarding** process for new developers, who can be productive quickly after familiarizing themselves with the overall architecture.
+
+### Cost-effectiveness
+
+In most cases, the most expensive cost of every project is people and their work and time. Therefore, by allowing them to be more efficient, we can reduce some redundant costs a bad architecture could cause.
+
+It will also allow better financial analysis and planning of pricing models for software products. It will make it easier to predict all the costs the platform requires to be functional.
+
+### Better product quality
+
+Making all team members productive gives them time to focus and spend more time on important things, such as the business requirements and the needs of users, rather than spending most of the time fixing bugs and reducing technical debt. Better product quality will also make our users more satisfied, which should be the end goal.
+
+## Exploring the architectural challenges of React applications
+
+Some of the most frequent questions when starting a professional React application revoles around :
+
+1. The project structure
+2. The rendering strategy
+3. The state management solutions
+4. The styling solutions
+5. The data fetching approach
+6. User authentication
+7. Testing strategies
+
+### What project structure are we using?
+
+Dan Abramov, one of the maintainers of React, says on this:
+
+> "Move files around until it feels right"
+
+And that is a very good point. It will mostly depend on the nature of the application.
+For example, we wouldn’t organize a social network application and a text editor application in the same way because they have different needs and different problems to solve.
+
+### What rendering strategy are we using?
+
+It depends on the nature of our application.
+If we are building an internal dashboard application, a single-page application is more than enough. But a customer-facing application should be SEO-friendly. In this case, we should think about `server-side rendering` or `static generation`, depending on how often the data on the pages are being updated.
+
+### What state management solution are we using?
+
+React comes with built-in state management mechanisms with its hooks and Context API. However, for more complex applications, we often reach for external solutions such as [Redux](https://redux.js.org/), [MobX](https://mobx.js.org/README.html), [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction), [Recoil](https://recoiljs.org/) etc.
+
+Choosing the right state management solution depends a lot on the application’s needs and requirements. We will not reach for the same tools if we are building a _to-do app_ or an _e-commerce application_. It mostly depends on **the amount of state that needs to be shared** across the entire application and the **frequency of updating** those pieces of state :
+
+- Will our application have a lot of _frequent updates_? If that is the case, we might consider `atom-based` solutions such as [Recoil](https://recoiljs.org/) or [Jotai](https://jotai.org/).
+
+- If our application requires components to share the same state, then [Redux](https://redux.js.org/) with [Redux Toolkit](https://redux-toolkit.js.org/) is a good option.
+
+- If we do not have too much _global states_ and don’t update it very often, then [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) or [React Context API](https://react.dev/reference/react/useContext), in combination with hooks, are good choices.
+
+At the end of the day, it all depends on the application’s needs and the nature of the problem we are trying to solve.
+
+**Understanding what state is and how to manage state (understand the scope of the state) is essential.**
+
+### What styling solution are we using?
+
+This one mostly depends on preference. Some people prefer vanilla CSS, some people love utility-first CSS libraries such as [Tailwind](https://tailwindcss.com/), and some developers can’t live without CSS in JS.
+
+Making this decision should also depend on whether our application will be re-rendered very often. If that is the case, we might consider build-time solutions such as [vanilla CSS](https://vanillacss.com/#inputs), [SCSS](https://sass-lang.com/documentation/syntax/), [Tailwind](https://tailwindcss.com/), and others. Otherwise, we can use runtime styling solutions such as [Styled Components](https://styled-components.com/), [Emotion](https://emotion.sh/docs/introduction), etc..
+
+We should also keep in mind whether we want to use a pre-built component library like [Chakra UI](https://chakra-ui.com/) or if we want to build everything from scratch.
+
+### How are we going to handle user authentication?
+
+This depends on the **API implementation**.
+
+- Are we using token-based authentication?
+- Does our API server support cookie-based authentication?
+
+It is considered to be safer to use cookie-based authentication with _httpOnly_ cookies to prevent cross-site scripting (XSS) attacks.
+
+### What testing strategies are we going to use?
+
+This depends on the team structure. If we have QA engineers available, we will be able to let them do end-to-end tests.
+
+It also depends on how much time we can devote to testing and other aspects.
+Keep in mind that we should always consider having some level of testing, at least integration, and end-to-end testing for the most critical parts of our application.
+
+## Understanding architectural decisions when building React applications
+
+### Bad architectural decisions
+
+Let’s look at some of the bad architectural decisions that might slow us down.
+
+#### _Flat project structure_
+
+Imagine having a lot of components, all living in the same folder. The simplest thing to do is to place all the React components within the components folder, which is fine if our components count does not exceed 20 components. After that, it becomes difficult to find where a component should belong because they are all mixed.
+
+#### _Large, tightly coupled components_
+
+Having large and coupled components have a few of downsides:
+
+- They are difficult to test in isolation
+- They are difficult to reuse
+- They may also have performance issues in some cases because the component would need to be re-rendered entirely instead of us re-rendering just the part that needs to be re-rendered.
+
+#### _Unnecessary global state_
+
+Having global state is fine, and often required. However, keeping too many things in a global state can be a bad idea. It might affect performance, but also maintainability because it makes it difficult to understand the scope of the state.
+
+#### _Using the wrong tools to solve problems_
+
+The number of choices in the React ecosystem makes it easier to choose the wrong tools to solve a problem – for example, **caching server responses in the global store**. It may be possible, and we have been doing this in the past, but that doesn’t mean we should keep doing that because there are tools to solve this problem, such as [React Query](), [SWR](), [Apollo Client](), etc...
+
+#### _Putting the entire application in a single component in a single file_
+
+This is something that shouldn’t ever happen, but it is still worth mentioning. Nothing is preventing us from creating a complete application in a single file. It could be thousands of lines long – that is, a single component that would do everything. But for the same reason as having large components, it should be avoided.
+
+#### _Not sanitizing user inputs_
+
+Many hackers on the web are trying to steal our user’s data. Therefore, we should do everything possible to prevent such things from happening. By sanitizing user inputs, we can prevent hackers from executing some malicious piece of code in our application and stealing user data. For example, we should prevent our users from inputting anything that could be executed in our application by removing any parts of the input that might be risky.
+
+#### _Using unoptimized infrastructure to serve our application_
+
+Using unoptimized infrastructure to serve our application will make our application slow when accessed from different parts of the world.
+
+### Good architectural decisions
+
+Let’s look at some of the good decisions we can take to make our application better.
+
+#### _Better project structure based on state domain or features_
+
+Splitting the application structure into different features or state domain, each responsible for its own role, will allow better separation of concerns, better modularity, better flexibility, and scalability.
+
+#### _Better state management_
+
+Instead of putting everything in a global state, we should start by defining a piece of a state as close as possible to where it is being used in the component and lift it only if necessary.
+
+#### _Smaller components_
+
+Having smaller components will make them more testable, easier to track changes, and easier to work in larger teams.
+
+#### _Separation of concerns_
+
+Having each component do as little as possible makes components easy to understand, test, modify, and even reuse.
+
+#### _Static code analysis_
+
+Relying on static code analysis tools such as [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), and [TypeScript](https://www.typescriptlang.org/) will improve our code quality without us having to think too much about it. We just need to configure these tools, and they will let us know when something is wrong with our code. These tools also introduce **consistency** in the code base regarding formatting, code practices, and documentation
+
+#### _Deploying the application over a CDN_
+
+Having users worldwide means our application should be functional and accessible from all over the world. By deploying the application on a CDN, users all over the world can access the application in the most optimal way.
+
+## How to apply these guidelines to a real-world application?
+
+Now, let’s apply the principles we just learned, to a real-world scenario. Let's imagine that we are building an application that **allows organizations to manage their job board**.
+The organization admins can **create job postings** for their organizations, and the candidates can **apply for the jobs**.
+
+### Step 1 : Gather the requirements of the application
+
+The first step is to **gather the requirements of the application**. What does the business expect from the application? We can divide the application requirements into two categories:
+
+- Functional requirements
+- Non-functional requirements
+
+#### _Functional requirements_
+
+Functional requirements should define **what the application does**. They are description of all the features and functionalities of an application that our users would use.
+
+Our application can be split into two parts:
+
+1. Publicly facing part
+2. Organization admin dashboard
+
+##### _Publicly facing part_
+
+For the publicly facing part, we should have the following:
+
+- A Landing page with some basic information about our application.
+- A "Public organization" view where the visitors can find information about the given organization. It should also include the list of jobs of the organization.
+- A "Public job" view where the visitors can view some basic information about the given job. It should also include a CTA button for applying for the job.
+
+##### _Organization admin dashboard_
+
+For the admin dashboard, we should have the following:
+
+- An Authentication system for the admins to authenticate into the dashboard.
+- A "Job list" view where the admin can view all the jobs of the organization.
+- A "Create a job" view that contains the form for creating new jobs.
+- A "Job details" view, which contains all the information about the job.
+
+#### Non-functional requirements
+
+Non-functional requirements should define how the application should work from a technical point of view. It includes the following:
+
+- _Performance_: The application must be interactive within 5 seconds. By that, we mean that the user should be able to interact with the page within 5 seconds from when the request to load the application was made until the user can interact with the page.
+- _Usability_: The application must be user-friendly and intuitive. This includes implementing responsive design for smaller screens. We want the user experience to be smooth and straightforward.
+- _SEO_: The public-facing pages of the application should be SEO-friendly.
+
+### Step 2 : Divide the application into features categories (state domains or model)
+
+The second step is to divide the application into features categories.
+
+From the first step we understand that we can divide the **features into four categories** :
+
+1. Features related to the **USER**
+2. Features related to the **ORGANISATION**
+3. Features related to the **JOB**
+
+Therefore the data model would look like this:
+
+<Image src={dataModel} alt="" />
+
+There are three main models in the application:
+
+1. User
+2. Organisation
+3. Job
+
+Defining the application requirements and data model should give us a good understanding of what we are building. Now, let’s explore the technical decisions for our application.
+
+### Step 3 : Exploring the technical decisions
+
+The last crucial step is to make decisions about :
+
+- The Project structure
+- The Rendering strategy
+- The State management solution
+- The Styling solution
+- The Authentication strategy
+- The Testing solution
+
+#### Project structure
+
+We will be using a **feature-based project structure** that allows good feature isolation and good communication between the features.
+
+This means that we will create a **features/** folder for every larger functionality, which will make the application structure more scalable. It will scale very well when the number of features increases because we only need to worry about a specific feature and not the entire application at once, where the code is scattered all over the place.
+
+#### Rendering strategy
+
+When it comes to the rendering strategy, we are referring to the way the pages of our application are being created.
+
+There are different types of rendering strategies:
+
+##### _Server-side rendering_:
+
+In the early days of the web, this was the most common way to generate pages with dynamic content. The page content is created on the fly, inserted into the page on the server, and then returned to the client.
+
+The benefits of this approach are that the pages are easier to crawl by search engines, which is important for SEO, and users might get faster initial loads of the page compared to single-page apps.
+
+The downside of this approach is that it might require more server resources.
+
+In our scenario, we will be using this approach for the pages that can be updated frequently and should be SEO optimized at the same time, such as **the public organization page** and **public job page**.
+
+##### _Client-side rendering_ :
+
+The existence of client-side JavaScript libraries and frameworks, such as [React](https://react.dev/), [Angular](https://angular.io/), [Vue](https://vuejs.org/), and others, allows us to create complex client-side applications completely on the client.
+
+The benefit of this is that once the application is loaded in the browser, the transition between pages seems very fast. On the other hand, for the application to load, we need to download a lot of JavaScript to use the application. This can be improved by code splitting and lazy loading. It is also more difficult to crawl the page’s content using search engines, which can impact SEO scores.
+
+We can use this approach **for protected pages**, i.e every pages in the dashboard of our application.
+
+#### _Static generation_ :
+
+This is the most straightforward approach. Here, we can generate our pages while building the application and serve them statically.
+
+It is very fast, and we can use this approach for pages that never update but need to be SEO optimized, such as the landing page of our application.
+
+Since our application requires multiple rendering strategies, we will use [Next.js](https://nextjs.org/), which supports each of them very well.
+
+#### State management
+
+State management is probably one of the most discussed topics in the React ecosystem. It is very fragmented, meaning there are so many libraries that handle state that it makes it difficult for the developers to make a choice.
+
+To make state management easier for us, we need to understand that the difference between : Local state, Global state, Server (remote) state, Form State, URL state.
+
+##### Local state
+
+This is the simplest type of state. It is the state that is being used in a single component only and is not required anywhere else.
+
+We will use the built-in React `useState` hook to handle that.
+
+##### Global state
+
+This is the state that is shared across multiple components in the application. It is used to avoid prop drilling. We will be using a lightweight library called [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) for this.
+
+##### Server or Remote state
+
+This state is used to store data responses from the API.
+Things such as loading states, request de-duplications, polling, and others are very challenging to implement from scratch. Therefore, we will be using [React Query](https://tanstack.com/query/v3/) to handle this elegantly so that we have less code to write.
+
+##### Form state
+
+This state is used to manage form inputs, form submission, validation etc...
+We will be using the [React Hook Form](https://react-hook-form.com/) library to handle form state in our application.
+
+##### URL state
+
+This type of state is often overlooked yet very powerful. URL and query params can also be considered as pieces of state. This is especially useful when we want to deep-link some part of the view. Capturing the state in the URL makes it very easy to share it.
+
+#### Styling
+
+Styling is also a big topic in the React ecosystem. There are many great libraries for styling React components. To style our application, we will use the [Chakra UI](https://chakra-ui.com/) component library, which uses [Emotion](https://emotion.sh/docs/introduction) under the hood, and it comes with a variety of nice-looking and accessible components that are very flexible and easy to modify.
+The reason for choosing [Chakra UI](https://chakra-ui.com/) is that it has a great developer experience. It is very customizable, and its components are accessibility-friendly out of the box.
+
+#### Authentication
+
+We prefer a `cookie-based` strategy to handle authentication. This means that on a successful auth request, a cookie will be attached to the headers, which we will use to handle user authentication on the server.
+
+#### Testing
+
+Testing is a very important step to confirm if our application is working as it’s supposed to.
+We don’t want to ship our product with bugs in it. Also, manual testing takes more time and effort to discover new bugs, so we want to have automated tests for our application.
+
+There are multiple types of tests:
+
+##### _Unit tests_
+
+Unit tests only test the smallest units of an application in isolation.
+We will be using [Jest](https://jestjs.io/) to unit-test the shared components of our application.
+
+##### _Integration tests_
+
+Integration tests test multiple units at once. They are very useful for testing the communication between multiple different parts of the application.
+We will be using [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) to test our pages.
+
+##### _End-to-end tests_
+
+End-to-end tests allow us to test our application’s most important parts end to end, meaning we can test the entire flow. Usually, the most important end-to-end tests should test the most critical features.
+
+For this kind of testing, we will be using [Cypress](https://www.cypress.io/).
+
+## Summary
+
+[React](https://react.dev/) is a very popular library for building user interfaces, and it leaves most of the architectural choices to developers, which can be challenging.
+
+We learned that some of the benefits of setting up a good architecture are a good project foundation, easier project management, increased productivity, cost-effectiveness, and better product quality.
+
+We also learned about the challenges to consider, such as project structure, rendering strategies, state management, styling options, authentication strategies, testing solutions etc..
+
+Finally, we put in practice those principles by planning an application for managing job boards and job applications. Check out this [Link]() for the final version of the application.

@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        IBM: 'IBM Plex Mono',
+        IBM: 'IBM Plex Sans',
         poppins: 'Poppins, sans-serif',
         neon: 'Neoneon,sans-serif',
         fontmono: ['SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono'],

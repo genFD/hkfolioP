@@ -26,7 +26,7 @@ export default function App({ Component, pageProps, router }) {
           <div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-11121e dark:ring-11121e" />
         </div>
       </div>
-      <div className="relative">
+      <div className="relative font-IBM">
         <Header />
         <main>
           <Component previousPathname={previousPathname} {...pageProps} />
