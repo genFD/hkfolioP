@@ -1,0 +1,1520 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import requestserver from './assets/requestserver.png'
+import webserver from './assets/webserver.png'
+import nginx from './assets/nginx.png'
+import nginxconfig from './assets/nginx-config.png'
+import basedirreq from './assets/base-dir-req.png'
+import createarecord from './assets/createnewarecord.png'
+import locationblock from './assets/location-block.png'
+import hellownginorld from './assets/hellownginorld.png'
+import ngninxrequestnode from './assets/request-ngnix-node.png'
+import nginxt from './assets/ngninx-t.png'
+import badgateway from './assets/badgateway.png'
+import noderunning from './assets/node-running.png'
+import pm2 from './assets/pm2-app.png'
+import pm2su from './assets/pm2-startup.png'
+import openports from './assets/openports.png'
+import open from './assets/open.png'
+import permission from './assets/permission.png'
+import chmod from './assets/examplechmod.png'
+import cron from './assets/cron.png'
+import cronguru from './assets/crontabguru.png'
+import cronguru2 from './assets/crontabguru2.png'
+import syslog from './assets/syslog.png'
+import redirectnginx from './assets/redirect.png'
+import createrserv from './assets/server.conf.png'
+import editconf from './assets/editconf.png'
+import subdomain from './assets/subdomain.png'
+import websockconf from './assets/websockconf.png'
+import vscodestartserver from './assets/vscodestartserver.png'
+import websocketbrowser from './assets/websocketbrowser.png'
+import wbsockconnect from './assets/websocketsbrowserconnect.png'
+import wbsockconnect2 from './assets/wbsocketconnect2.png'
+import newfileserver from './assets/newfileserver.png'
+import reldb1 from './assets/reladb1.png'
+import reldb2 from './assets/reldb2.png'
+import reldb3 from './assets/reldb3.png'
+import visitors from './assets/websocketsbrwoser.png'
+import logclients from './assets/logclients.png'
+import successcertbot from './assets/successcertbot.png'
+import certbotnginx from './assets/certbotnginx.png'
+import https from './assets/https.png'
+import protocolhttp1 from './assets/protocolhttp1.png'
+import http2certbot from './assets/http2certbot.png'
+import http2protocol2 from './assets/http2protocol2.png'
+import dockerrun from './assets/dockerrun.png'
+import secdinstance from './assets/secdinstance.png'
+import orchestra from './assets/orchestra.png'
+import loadbalancer from './assets/load-balancer.png'
+
+import Illustration from './assets/illustration.png'
+
+export const meta = {
+  author: 'Hermann Kanga',
+  date: '2022-09-05',
+  title: 'An overview of Full stack developement - Part II',
+  description:
+    'In this second part, we will get hands-on with setting up our own server to build and deploy a web application from scratch.',
+}
+
+export default (props) => <ArticleLayout meta={meta} {...props} />
+
+Part II
+
+In this second part, We will get hands-on with setting up our own server to build and deploy a web application from scratch.
+
+<Image src={Illustration} alt="" />
+
+## 📖 Table of contents
+
+Part 2:
+
+- Application setup
+- Git
+- Continous Integration and Deployment
+- Realtime & Databases
+- Containers
+
+## Part II
+
+If we navigate to our server in the browser right now, this is what you are going to see :
+
+<Image src={requestserver} alt="server in" />
+
+This is because the server doesn't know how to respond to a request.
+Let's make our server respond to request.
+To do this we need a web server. There are two main big players <a href="https://linuxhandbook.com/linux-file-permissions/">appache</a> and <a href="https://linuxhandbook.com/linux-file-permissions/">ngninx</a>.
+
+ngninx can be used for multiple purposes :
+
+- Web servers
+- reverse proxy
+- forward proxy
+
+### Why do we need a web server?
+
+We're going to use nginx.
+When a request comes in, we need a web server to route that request to the right place (database, the application or another server)
+
+<Image src={webserver} alt="server in" />
+
+We technically don't need a web server to route our requests, but it's not a good practice.
+
+These are the steps to follow :
+
+1. Install Nginx
+
+```bash
+sudo apt install nginx
+```
+
+2. Start Nginx
+
+```bash
+sudo service nginx start
+```
+
+3. Navigate to your server in the browser
+
+After running these command if you try to navigate to your server in the browser again you will see this page :
+
+<Image src={nginx} alt="server in" />
+
+Now we've officially hooked up the domain to the server. This is a good starting place.
+
+Let's check the nginx default server configuration by running the following command :
+
+```bash
+less /etc/sites-available/default
+```
+
+You should see :
+
+<Image src={nginxconfig} alt="server in" />
+
+- root /var/www/html : this is the base directory for requests, the welcome page is located in this directory.
+
+<Image src={basedirreq} alt="server in" />
+
+- location : the location block says where am I going from path
+
+<Image src={locationblock} alt="server in" />
+
+- directives : in this case it's going to try to serve an html if not there serve 404, we will used another directive called proxy_pass to route our request into node from nginx
+
+let's try and edit the default homepage :
+
+```bash
+cd /var/www/html
+vi index.html
+# add hello world and save and exit
+```
+
+if you go back to the browser and refresh the page you should see :
+
+<Image src={hellownginorld} alt="server in" />
+
+Ngnix is great!, but let's move into a domain, we are much more familiar with. We are going to use nodejs to host our application. The request will come to the server, Nginx will proxy it to the nodejs.
+
+<Image src={ngninxrequestnode} alt="server in" />
+
+These are the steps we will follow :
+
+Here is the link to <a href="https://github.com/nodesource/distributions/blob/master/README.md#debinstall">
+installation instructions </a> on Github
+
+1. Download and import the Nodesource GPG key :
+
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+```
+
+2. Create deb repository :
+
+```bash
+NODE_MAJOR=20
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+```
+
+3. Install node :
+
+```bash
+sudo apt-get update
+sudo apt-get install nodejs -y
+```
+
+4. If git not already installed, install git :
+
+```bash
+sudo apt install git
+```
+
+Next, let's setup our application :
+
+1. Change ownership of /www
+
+```bash
+sudo chown -R $USER:$USER /var/www
+```
+
+2. Make an application directory
+
+```bash
+mkdir /var/www/app
+```
+
+3. Initialize an empty git repository
+
+```bash
+cd app
+git init
+```
+
+4. Create application files
+
+```bash
+npm init -y
+touch app.js
+```
+
+5. Create a basic nodejs server in app.js
+
+```bash
+vi app.js
+```
+
+copy-paste this code snippet:
+
+```vim
+const http = require('http')
+const PORT = 8000
+
+const server = http.createServer((req, res) =>
+res.write("Hello from basic nodejs server")
+res.end()
+})
+
+server.listen(PORT)
+console.log(`server is listening to port ${PORT}))
+```
+
+{/* check for example our to write article explaining instructions : */}
+
+{/* https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04 */}
+
+6. Setup proxy pass
+
+Proxy pass is an nginx directive that allows us to route any requests that comes to our server to our node.js server.
+
+```bash
+sudo vi /etc/nginx/sites-enabled/hk
+```
+
+Copy-paste the following configuration to create a virtual server block :
+
+```vim
+server {
+    listen  80;
+    listen  [::] : 80 default_server
+    root /var/www/html
+    index index.html
+    server_name <your_domain>
+    location / {
+              proxy_pass http://127.0.0.1:8000
+    }
+}
+```
+
+- We listening on port 80
+- Serving an index.html in /var/www/html directory
+- renamed our server
+- told nginx to reroute the request to localhost:port8000 our node js server is running
+
+Now we're going to point ngninx to our new server:
+
+```bash
+sudo vi /etc/nginx/ngnix.conf
+```
+
+Modify this line `/etc/nginx/sites-enabled/ ` to include :
+
+```vim
+/etc/nginx/sites-enabled/<server_name>
+```
+
+To validate your configuration file you can run the following command :
+
+```bash
+nginx -t
+```
+
+if everything is correct you should get the following output:
+
+<Image src={nginxt} alt="server in" />
+
+let's restart nginx
+
+```bash
+sudo service restart nginx
+```
+
+if you refresh the page in the browser you should see the following:
+
+<Image src={badgateway} alt="server in" />
+
+This is normal because our nodejs server is not running
+back in the terminal run the following command:
+
+```bash
+cd /var/www/app
+node app.js
+```
+
+refresh the page in the browser you should see the following:
+
+<Image src={noderunning} alt="server in" />
+
+Congratulations, we have :
+
+- bought a server on digital ocean
+- bought a domain
+- connected the domain to a server
+- created a nodejs server
+- got ngninx to reroute the request from the servr to your node.js app
+
+With this in place we can build a full web page, accessible via our domain hkgetsit.tech
+
+To make sure our webpage stays up and running even when we close the shell or exit the terminal, we're going to install a program called pm2.
+
+1. Install pm2
+
+```bash
+sudo npm i -g pm2
+```
+
+2. start pm2
+
+```bash
+pm2 start app.js
+```
+
+you should get this output:
+
+<Image src={pm2} alt="server in" />
+
+3. setup autostart
+
+```bash
+pm2 save
+pm2 start up
+```
+
+copy paste the output command and execute it
+
+you should see the following output:
+
+<Image src={pm2su} alt="server in" />
+Now our server reboot for exmaple pm2 is going to bring up our node app automatically
+
+### Creating a git repo
+
+We will create a git repository to be able to access our node js app on our local machine instead of the server.
+
+1. On <a href="https://github.com/">github</a> create a git repository
+
+2. On the server create an SSH key called gh_key
+
+```bash
+cd ~/.ssh
+ssh-keygen
+```
+
+3. Add the ssh key to github following <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">
+   these instructions:</a>
+
+4. Make sure you git uses your new ssh key
+
+```bash
+vi ~/.ssh/config
+#add this to your configuration
+
+Host github.com
+Hostname github.com
+IdentityFile ~/.ssh/gh_key
+```
+
+5. Push the repository to github.
+
+```bash
+git push -u origin main
+```
+
+If everything is working correctly, you should be able to pull and push from the github repository.
+
+### Security
+
+_How do you secure your application?_
+
+Read the auth log
+
+```bash
+sudo cat /var/log/auth.log
+```
+
+_What could someone do if they gain access to your server?_
+
+- Use your server as a bot to attack other users infrastructure
+- People can connect to your Github via your server
+- People can connect to your server and delete log files making it impossible to know that your machine was compromised
+
+Hence security is paramount when it comes to servers.
+
+These are some of the solutions you can use to protect your server :
+
+- SSH : we don't use password
+- Firewalls : a firewall restrict access to activities
+- Updates : Keep the software up to date because if there's a hack or a breach you want to ensure your software is always running the latest version
+- Two factor authentication
+- VPN
+
+Before getting to firewalls, we need to understand what a port is.
+By defintion, a port is a communication endpoint that maps to specific process or network service. Ports are amazing because they allow us to run multiple services on one IP address.
+
+To take a look at the well known port, run this command :
+
+```bash
+less /etc/services
+```
+
+Ports are an opening in your computer and because of that, they represent a entry point for attackers.
+
+Let's run these commands to take a look at our open ports on our machine :
+
+- Install nmap
+
+```bash
+sudo apt install nmap
+```
+
+- Run nmap
+
+```bash
+nmap  <your_server_ip>
+```
+
+- Extra service/version information
+
+```bash
+nmap -sV <your_server_ip>
+```
+
+<Image src={openports} alt="server in" />
+
+It's showing all the ports open on the server. Right now we have Port 22 (ssh), Port 80(http) and Port 8000(http-alt). Because we're running our node app on port 8000, this port is always going to be open. But it shouldn't be open because if you remember Nginx is intercepting incoming request comming to port 8000. We're going to close port 8000.
+
+### Firewall
+
+In order to do that, we're going to use a firewall.
+
+> A firewall is a network security device that monitors incoming and outgoing network traffic and decides whether to allow or block specific traffic based on a defined set of security rules.
+
+<a href="http://https://www.cisco.com/c/en/us/products/security/firewalls/what-is-a-firewall.html">
+  Check out cisco docs on firewalls
+</a>
+For our case we can use a nice piece of software called <a href="https://help.ubuntu.com/community/UFW">
+  ufw
+</a> or the uncomplicated firewall. The commands are really simple :
+
+- ufw allow
+- ufw deny
+- ufw reject
+
+Let's go ahead and use ufw. The first thing to do is to allow ufw to take over the management of our firewall and then we will allow ssh, http, and finally enable the firewall :
+
+- Check firewall status
+
+```bash
+sudo ufw status
+```
+
+The status will probably be inactive which is fine.
+
+- Allow ssh
+
+```bash
+sudo ufw allow ssh
+```
+
+- Allow http
+
+```bash
+sudo ufw allow http
+```
+
+- Enable firewall
+
+```bash
+sudo ufw enable
+```
+
+If we run `sudo ufw status` again we should see the open ports
+
+<Image src={open} alt="server in" />
+
+Our firewall is set up, what else can we do?
+
+if we ever needed to block http connection (for example to only allow https connections), we could run this command :
+
+- Allow http
+
+```bash
+sudo ufw reject http
+```
+
+### Permisions and chmod
+
+check this article to fine tune <a href="https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/">article</a>
+
+When we run the command `ls -la`, we often see rw or rwx, but what does it mean?
+
+- `r` stands for read which is codified as `4`
+- `w` stands for write which is codified as `2`
+- `x `stands for execute which is codified as `1`
+
+These are called permissions. These permissions are broken up into groups.
+
+- owner
+- group
+- evryone else
+
+<Image src={permission} alt="permission" />
+
+In the example above :
+
+- `777` means we gave read, write and execute permission to the owner, group and everyone else.
+- `600` means we gave read and write permission to the owner and blocked access for group and everyone else.
+
+check out more example below :
+
+<Image src={chmod} alt="permission" />
+
+check out this <a href="https://quickref.me/chmod">cheatheet</a> for more information
+
+### Keeping our application up to date
+
+In order to keep our server up to date, we're going to use another package called `unattended-upgrades`. it allows the upgrades to run on the system at a periodic function.
+
+1. Install unattended-upgrades
+
+```bash
+sudo apt install unattended-upgrades
+```
+
+2. Enable upgrades
+
+```bash
+# enable us to run it in the background
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+```
+
+### Continous integration and deployment, shell scripting and cron job
+
+Continous integration helps us to ensures the code in production is the latest. CI helps us ensures that changes are validated and merge back into the main branch as often as possible.
+
+Continuous deployment means we're pushing to production.
+
+check out this article on <a href="https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment">ci/cd</a>
+
+CI/CD is about testing and validating your code, so that when you need to push to production, there's no question about what's going to happen.
+
+<a href="https://spinnaker.io/">Spinaker</a> is an open-source, multi-cloud continuous
+delivery platform that combines a powerful and flexible pipeline management system
+with integrations to the major cloud providers.
+
+We're going to make a fake CI/CD, but the first to do is a stopwatch.
+In order to do that we use a cron. Cron means do this tasks at certain intervals.
+
+So what we want to do is :
+
+1. create a bash script that git pulls from main branch
+2. create a cron job to execute script every 2 minutes
+
+bash/Shell scripts allow us to program commands in chains and have the system execute them as a scripted event, just like batch files.
+
+This is what a shell script looks like :
+
+```vim
+#! /usr/bin/bash
+
+read -p "what is your name" name
+echo "have a great day, $name"
+```
+
+THe command to pull from github is `git pull origin <branch_name>`. Our script would look like this :
+
+```bash
+cd /var/www/app
+vi github.sh
+
+#! /usr/bin/bash
+git pull origin main --ff-only
+```
+
+before executing the script we need to change the permission so that we can execute the file :
+
+```bash
+chmod 700 github.sh
+```
+
+To execute the file we run the following command:
+
+```bash
+cd /var/www/app
+./github.sh
+# the result should look like this:
+#* branch           main       -> FETCH_HEAD
+#Already up to date.
+```
+
+We wrote a two-line bash script to pull from github, but we want to do it at certain interval.
+
+A cron is composed of timer and path to the script you want to run
+
+<Image src={cron} alt="cron" />
+
+<a href="https://crontab.guru/">crontab.guru</a> is a website that allows us to generate
+the timer for our cronjob. For example if we want to run a cronjob at minute ten
+on tuesday we can write the following:
+
+<Image src={cronguru} alt="cron" />
+
+for our app, we want our cronjob to run every two minute, so we can write the following:
+
+<Image src={cronguru2} alt="cron" />
+
+To edit our cron job, we can run this command:
+
+```bash
+crontab -e
+# you should see the following
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.basic
+  3. /usr/bin/vim.tiny
+  4. /bin/ed
+
+
+# select vim by choosing option 2
+
+Choose 1-4 [1]: 2
+```
+
+In the editor, you can write the following:
+
+```vim
+*/2 * * * * sh /var/www/app/github.sh 2>&1 | logger -t github.sh
+```
+
+Save it. We piped our output into syslog so check if it's running we can execute this command :
+
+```bash
+sudo tail -f /var/log/syslog
+```
+
+we should see something like:
+
+<Image src={syslog} alt="cron" />
+
+we can see that the script was executed.
+
+With that in place, everytime we make a change it will be pull down automatically to our machine
+
+### Loggins, streams and Redirection
+
+When it comes to log files, there's a few different ways of reading it :
+
+- `tail` : output the last part of the file
+- `head` : output the first part of the file
+- `less` : output one page at a time
+- `cat` : output entire file
+
+The most common logs are :
+
+- syslog
+- auth.log
+- nginx/access.log
+
+logs are always located in **/var/log**
+
+In unix every commands we run has :
+
+- an input called _standard in_
+- an output called _standard out_
+
+And every function we run, all take the same arguments, and that allows to chain commands.
+
+as far as redirection these are the most common ones :
+
+- `|` : read from standard output
+- `>` : write standard output to a file
+- `>>` : append standard output to a file
+- `<` : read from standard input
+- `2>&1` : redirect both standard error and standard output
+
+Finding things.
+
+- `find` : search file names
+- `grep` : search file content
+
+take a look at this find command :
+
+```bash
+find /bar -name foot.txt
+```
+
+- find : command
+- `/bar` : the directory
+- `-name` : option
+- `foo.txt` : file
+
+take a look at this grep command :
+
+```bash
+grep -i 'hello' /var/www
+```
+
+- grep : command
+- `-i` : the directory
+- `-hello` : option
+- `/var/www` : directory
+
+for example, this command is useful to find the running processes
+
+```bash
+ps aux | grep node
+```
+
+_how do you make something redirect from nginx?_
+
+<Image src={redirectnginx} alt="cron" />
+
+GZIP
+
+is a compression algorithm that is run to compress files making it easier to send files over the wire. The browser knows how to unpack them, the nginx knows how to pack them up.
+
+_how to create a subdomain?_
+
+Subdomain are really useful, for example, a development version of a website can be located at dev.website.com while the production version continues to run at website.com giving developers the flexibility to make modifications as they wish without risking breaking the production version.
+
+A subdomain is a subset of main domain. We're going to create a subdomain called `blog`. These are the steps we will bne following :
+
+1. create a new subdomain called `blog`
+
+- create an A record
+- create a server
+
+2. Update nginx.conf
+3. Restart nginx
+
+On <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a> create a new A record :
+
+<Image src={createarecord} alt="cron" />
+
+To create a new server go to `/etc/nginx/sites-enabled` and execute the following command :
+
+```bash
+sudo vi blog._your_domain_.
+```
+
+and edit you file to look like this :
+
+<Image src={createrserv} alt="cron" />
+
+We're going to update our nginx.conf file :
+
+execute the following command :
+
+```bash
+cd /etc/nginx/
+sudo vi nginx.conf
+```
+
+edit your file by adding a new include line for "blog.your_domain"
+
+<Image src={editconf} alt="cron" />
+
+and finally we have to restart our nginx server :
+
+```bash
+sudo service nginx restart
+```
+
+check out this <a target="_blank" href="http://stackoverflow.com/questions/35868976/ddg#51684856">link</a> if you run into an error
+
+as always run `nginx -t` to validate your configuration.
+
+if you open the browser and navigate to your subdomain, you should see:
+
+<Image src={subdomain} alt="cron" />
+
+### Realtime and database
+
+#### Websockets
+
+Websockets are real time communication. It's a persistennt biderectional connection between client and server. How is that different from http? http is not persistent, websockets is.
+
+these are the steps we will follow :
+
+1. Update nginx configuration
+2. Create new nodejs server
+3. Enable websockets
+
+##### Update nginx configuration
+
+to go to our default server run this command :
+
+```bash
+cd /etc/nginx/sites-enabled/
+sudo vi <name_of_default_server>
+```
+
+in the configuration file add these directives to the location block like so :
+
+<Image src={websockconf} alt="cron" />
+
+With these two line we added the ability to have websockets.
+
+validate nginx config file and restart nginx
+
+```bash
+nginx -t
+sudo service nginx restart
+```
+
+Now that nginx has the ability to handle websocket connections, we're going to create a server. We're going to use Express this time around. Express is the a popular node framework. We're also going to use vscode. So open open vs code , create a new folder and clone the repo
+
+```bash
+git clone <link_to_your_github_repo>
+```
+
+- Install express by running this command :
+
+```bash
+npm install express
+```
+
+- create a new file
+
+```bash
+touch index-ws.js
+```
+
+copy this into the file :
+
+```js
+const express = require('express')
+const server = require('http').createServer()
+const app = express()
+
+app.get('/', function (req, res) {
+  res.sendFile('index.html', { root: __dirname })
+})
+
+server.on('request', app)
+server.listen(8000, function () {
+  console.log('listening on port 8000')
+})
+```
+
+- create an `index.html` file
+
+```bash
+touch index.html
+```
+
+and add this text to the file : 'websocket example'
+
+- start the server
+
+```bash
+node index-ws.js
+```
+
+you should see this :
+
+<Image src={vscodestartserver} alt="cron" />
+
+Open the browser and go to localhost:8000 :
+
+<Image src={websocketbrowser} alt="cron" />
+
+Next let's dive in and create the actual web sockets.
+
+We're going to use a library called <a href="https://www.npmjs.com/package/ws">ws</a>
+
+- Install ws library :
+
+```bash
+npm install ws
+```
+
+still in the index-ws.js, add this to the file :
+
+```js
+// websockets
+
+const websocketsServer = require('ws').Server
+const wss = new websocketsServer({ server: server })
+
+wss.on('connection', function connection(ws) {
+  const numOfClients = wss.clients.size
+  console.log(`clients connected : ${numOfClients}`)
+  wss.broadcast(`current visitors : ${numOfClients}`)
+  if (ws.readyState === ws.OPEN) {
+    ws.send('welcome to websocket server')
+  }
+  ws.on('close', function close() {
+    console.log('clients disconnected')
+  })
+})
+
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    client.send(data)
+  })
+}
+```
+
+- we required the websocket server
+- we created a new instance of the websocket connection, passed to it the express server that we created and saved it in a variable called "wss"
+- Next websockets has this idea of states. We want to do actions when the web sockets connect. To do that we used `'ws.on'` and the event we want to listen to is 'connection', the action to run everytime there's a connection is a callback function that takes `ws` as argument
+  - and console.log the number of clients connected.
+  - We also used something called the `broadcast` command to send a message to everybody connected the number of people connected
+  - we handling a couple of states. a socket can be open, closed or errored:
+    - if the state is open we are going to send a message to the client 'welcome to my websocket server'
+    - when the connection close we console.log 'a client has disconnected'
+  - finally we had to write the `broadcast` function which just send a message to every client
+
+Now we're going to create a websocket connection in our `index.html` that allows us to deal with our websocket connection
+
+In our index.html file, we can add this :
+
+```html
+<html>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+    </head>
+    <body>
+      Welcome to WebSocket
+    </body>
+    <script>
+      let ws
+      const proto = window.location.protocol === 'https' ? 'wss' : 'ws'
+      ws = new WebSocket(`${proto}://${window.location.host}`)
+      ws.onmessage = (event) => {
+        console.log(event.data)
+      }
+    </script>
+  </html>
+</html>
+```
+
+- In the script tag we :
+  - pulled the protocol from `window.location.protocol`. The protocol will tell us if it is http or https, if it's https we want to choose 'wss' otherwise 'ws'
+  - built the websocket by creating a new instance of websocket which is built-in in the window object and pass to it the protocol and it should give back to us our domain back.
+  - made our websocket respond to any messages we get from the server
+
+If you open the browser and go to localhost:8000 you should see this :
+
+<Image src={wbsockconnect} alt="cron" />
+
+It's messaging our current visitors and the message "welcome to websocket server"
+
+if we open a second tab and go to localhost 8000 the number of visitors should be 2
+
+<Image src={wbsockconnect2} alt="cron" />
+
+and that's the power of websockets :
+
+- It's real time, we don't have to force a refresh or force an http update or push it to the client
+- you can control the entire client via the server
+
+The last thing we need to do, is push our code so the sever can pull it down and we'lss see if it's working on our domain
+
+so in the terminal run the command :
+
+```bash
+git add .
+git commit -m "init"
+git push origin main
+```
+
+Jump back to the server, the cron job that we set up earlier should have already pulled down the files automatically. if run these commands :
+
+```bash
+cd /var/www/app
+ls -la
+```
+
+you should see this the html file, the index-ws.js etc.. :
+
+<Image src={newfileserver} alt="cron" />
+
+we will modify our script to install the modules automatically everytime we pull down from the repository
+
+edit the script
+
+```bash
+vi github.sh
+```
+
+and add `npm install` to the script and save
+
+install the modules by running the following command :
+
+```bash
+npm install
+```
+
+we're going to stop our node server by running the command :
+
+```bash
+pm2 stop app.js
+```
+
+and start back up with our new server, adding `--watch` to ensure if we make any changes pm2 restart our server :
+
+```bash
+pm2 start index-ws.js --watch
+pm2 save
+```
+
+The new websocket server should be up and running, open the browser and go to your domain you should see this :
+
+{/* <Image src={} alt="cron" /> */}
+
+so we just :
+
+- created a web socket connection
+- Updated nginx
+  and now we have a real time connection running through our domain.
+
+### Database
+
+Let's move on and talk about databases.
+
+_why do databases exist?_
+
+In the realm of databases, there's two different kind of databases:
+
+- relational databases : SQL, mySQL, SQLITE, relational databases are very structured
+- non relationnal databases : noSQL
+
+We're going to be using relational databases.
+
+<Image src={reldb1} alt="cron" />
+
+relational databases are made up of three different parts:
+
+- Tables : in our example above we have the `users` table
+- Fields or columns : we have two columns `name` and `location`
+- Rows or records: this table has two records
+
+<Image src={reldb2} alt="cron" />
+
+When we have multiple tables of data, we can make them to relate to each other somehow.
+
+- each record in the table has an id, it's called the `primary key`
+- when a primary key is in another table we call it a `foreign key`: in our example our users table is related to the food table. users id being in the food table, helps us to establish a relationship between a user and a food record
+
+That's the power of the relational database: you have a lot of tables with disjointed records, but you are able to make it all tie together, so that we can write complex queries like this :
+
+<Image src={reldb3} alt="cron" />
+
+- in the first query we're selecting all the information about a particular user `jem`
+- in the second we're joining two tables, and we're selecting all the users where the type of food is Ramen.
+
+We're going to create a database using `Sqlite`. The goal is to write a visitor log for our websocket server. Check out the sqlite3 library <a href="https://github.com/mapbox/node-sqlite3/wiki/API">API docs</a>
+
+Here are the steps we will be following :
+
+- back in vs code run the following command to installl sqlite3
+
+```bash
+npm i sqlite3
+```
+
+- in `index-ws.js` import sqlite :
+
+```js
+const sqlite = require('sqlite3')
+```
+
+- create a new database instance and put it in memory :
+
+```js
+...
+const db = new sqlite.Database(':memory:')
+```
+
+- Create a table named `visitors`, with two columns named `count` and `time` :
+
+```js
+...
+db.serialize(() => {
+    db.run(`CREATE TABLE visitors (
+       count INTEGER
+       time TEXT
+    )
+    `);
+});
+
+```
+
+- Create a function to query the database and console.log the row :
+
+```js
+...
+function getCount() {
+  db.each('SELECT * FROM visitors', (err,row) => {
+    console.log(row)
+  })
+}
+```
+
+- create a function to close the database connection:
+
+```js
+...
+function shutdownDB() {
+  getCount()
+  console.log('Shutting down database')
+  db.close()
+}
+```
+
+- catch the signal interrupt process ('SIGINT'), close all the websocket connections and execute the shutdown function:
+
+```js
+process.on('SIGINT', () => {
+  wss.clients.forEach((client) => {
+    client.close()
+  })
+  server.close(() => {
+    shutdownDB()
+  })
+})
+```
+
+- log the total number of visitors and the current time :
+
+```js
+wss.on('connection', function connection(ws) {
+...
+db.run(`INSERT INTO visitors (count, time)
+        VALUES (${numClients}, datetime('now'))
+`);
+}
+)
+```
+
+start up the server and open up the browser at localhost:8000, you should see the number of visitor printed in the console :
+
+<Image src={visitors} alt="cron" />
+
+Now let's see if it wrote something in the table, in the terminal, run `ctrl + c`, you should see printed in the console the number of visitor and the time :
+
+<Image src={logclients} alt="cron" />
+
+Commit your changes to the repository.
+
+### HTTPS
+
+Http is made up of two parts :
+
+- the request
+- the response
+
+here's how a request looks like :
+
+```bash
+GET /http.1
+Host: hkgetsit.tech
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+```
+
+some common headers are:
+
+- user-agent : the requesting device type
+- Accept : what the device type will handle
+- Accept : the browser language
+- Content-type : The type of media
+- Set-cookie : sets stateful information
+- X- : typically used for custom headers.
+
+the response looks like this :
+
+```bash
+GET /http.1.1 OK
+server: nginx/1.1.4 Ubuntu
+date: sun nov 18 2020 1:14:13 GMT
+Content-Type: application/json
+Content-Length: 12
+```
+
+Status code indicates the status of an http request. Some common status code are :
+
+- 200 : OK
+- 301 : Moved permanently
+- 302 : Found (temp redirect)
+- 401 : Not authorized
+- 500 : Internal server error
+
+status code begining by :
+
+- 1xx : is usually information
+- 2xx : success
+- 3xx : redirect
+- 4xx : client error
+- 5xx : server error
+
+All modern browsers will require to use https to secure the request and response traffic.
+HTTPS helps us to encrypt the information sent back and forth between the server and the client.
+
+let's implement https.
+
+To do that we're going to use <a href="https://certbot.eff.org/instructions">certbot</a>.
+
+<Image src={logclients} alt="cron" />
+
+select the type of nginx and ubuntu 20 and you should see the instructions for setting up nginx :
+
+1. SSH into the server
+
+SSH into the server running your HTTP website as a user with sudo privileges.
+
+2. install snapd
+
+```bash
+sudo snap install core
+sudo snap refresh core
+
+```
+
+3. Remove certbot-auto and any Certbot OS packages
+
+```bash
+sudo apt-get remove certbot
+```
+
+4. Install Certbot
+
+```bash
+sudo snap install --classic certbot
+```
+
+5. Prepare the Certbot command
+
+Execute the following instruction on the command line on the machine to ensure that the certbot command can be run.
+
+```bash
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+6. Choose how you'd like to run Certbot
+
+Run this command to get a certificate and have Certbot edit your nginx configuration automatically to serve it, turning on HTTPS access in a single step.
+
+```bash
+sudo certbot --nginx
+```
+
+- Put in your email
+- select Yes to read the terms and service
+- select yes or no for the newsletter
+- leave it blank to have certificate for both the domain and the subdomain
+
+If it's successful you should be able to see this :
+
+<Image src={successcertbot} alt="cron" />
+
+What certbot did is :
+
+- Adjusting our nginx configuration
+
+<Image src={certbotnginx} alt="cron" />
+
+7. Test automatic renewal
+
+The Certbot packages on your system come with a cron job or systemd timer that will renew your certificates automatically before they expire.
+
+```bash
+sudo certbot renew --dry-run
+```
+
+Finally, we're going to open the port :
+
+```bash
+sudo ufw allow https
+```
+
+Now if we open up the browser and visit our website, we should see a lock indicating the connection is now secured via https.
+
+<Image src={https} alt="cron" />
+
+And that's it! we've implemented `https`
+
+### HTTP2
+
+HTTP2 does something called multiplexing, which just means we can do multiple things on one connection.
+
+on our website we can see that the protocol used is http1
+
+<Image src={protocolhttp1} alt="cron" />
+
+Let's implement http2
+
+```bash
+sudo vi /etc/nginx/sites-enabled/hk
+```
+
+add http2 on the listen block like this:
+
+<Image src={http2certbot} alt="cron" />
+
+restart nginx :
+
+```bash
+sudo service nginx restart
+```
+
+now, let's open up the website again :
+
+<Image src={http2protocol2} alt="cron" />
+
+we can see that the protocol has changed to http2
+
+### Containers
+
+Our last topic is containers.
+
+Microservices is software architecture of loosely connected services. The opposite is Monolith which is software architecture of tightly connected services.
+Pros and cons of Monolith vs Microservices.
+
+To create microservices, we use containerization.
+
+container don't care about the OS.
+For our example, we will use docker.
+Containers are :
+
+- lightweight
+- portable
+- easier for development
+- easier to manage
+- decouple the app from the infrastructure
+
+Let's containerize our application :
+
+1. Create a docker container :
+
+```bash
+cd /var/www/app
+```
+
+- create a dockerfile
+
+```bash
+vi dockerfile
+```
+
+add the following :
+
+```vim
+FROM node:19-alpine3.16
+Run mkdir -p /home/node/app/nodes_modules && chown -R node:node /home/node/app/
+WORKDIR /home/node/app
+COPY --chown=node:node package*.json ./
+USER node
+Run npm install
+COPY --chown=node:node . .
+EXPOSE 8000
+CMD ["node", "app.js"]
+
+```
+
+- the first line defines what type of OS it's running on : we're using alpine which is lightweight version of linux
+- we created an app directory within the node home directory and changed ownership to the node owner
+- We set up a working directory
+- Next because we're making a docker image from the application we already wrote, we need to copy the file from our directory to docker container.
+- We set the user to NODE
+- Install the packages
+- we changed the ownership from our current os which is owned by us to node user and copied the rest of our application
+- we exposed port 8000 to run our application
+- Finally, we run the command
+
+2. Install docker :
+
+```bash
+sudo apt install docker.io
+```
+
+3. create docker build :
+
+```bash
+docker build -t node-hkgetsit .
+```
+
+to see the image we created, we can run the command:
+
+```bash
+docker image ls
+```
+
+4. Run the docker image in the background :
+
+- first we need to stop the app running on port 8000
+
+```bash
+pm2 stop index-ws
+```
+
+- run the image
+
+```bash
+docker run -d -p 8000:8000 node-hkgetsit
+```
+
+Now if we visit our website again, we're back to our simple node server :
+
+<Image src={dockerrun} alt="cron" />
+
+We can create another docker instance running on another port :
+
+```bash
+docker run -d -p 3001:8000 node-hkgetsit
+```
+
+we can see that we have two instances running by running this command
+
+```bash
+docker ps
+```
+
+you should see something like this:
+
+<Image src={secdinstance} alt="cron" />
+
+and that's the power of docker we can run as many instances as we like on one server.
+
+#### Orchestration
+
+<Image src={orchestra} alt="cron" />
+
+In a real world, you can have thousands of containers running. We need something to manage those containers, we call it orchestration.
+One of the most popular tool, to do it is `Kubernetes`. With kubernetes, we can create hundreds of containers at one time, all running the exaxt instance of our application.
+
+Going back to our application, we have two instances running, we can balance between the two of them using a load balancer :
+
+<Image src={loadbalancer} alt="cron" />
+
+if one server is overloaded we would be able to route the request to the one that's runnning lower.
+There's different types of algorithm for deciding how to balance between containers :
+
+- round robin algorithm
+- IP hashing
+- Random choice
+- Least connection
+- Least loads
+
+Let's implement a load balancer in nginx. We're going to create an Upstream, to list the servers we want to connect to and then in a server block we'll proxy pass the cluster and nginx will take care of the rest.
+
+1. add server cluster to the nginx configuration
+
+```bash
+sudo vi /etc/nginx/nginx.conf
+```
+
+and add the following in the http block :
+
+```vim
+upstream nodebackend {
+  server localhost:8000;
+  server localhost:3001;
+}
+```
+
+2. Proxy pass to the cluster
+
+```bash
+sudo vi /etc/nginx/sites-enabled/hk
+```
+
+and add the following in the location block :
+
+```vim
+location {
+  ...
+  proxy_pass http://nodebackend
+}
+```
+
+- restart nginx
+
+```bash
+sudo service nginx restart
+```
+
+If we did everything correctly, you should be able to visit the website.
+
+We're now have a fully functionning web application

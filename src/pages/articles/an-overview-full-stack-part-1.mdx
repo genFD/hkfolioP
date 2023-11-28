@@ -1,40 +1,61 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
 import Image from 'next/image'
-import Illustration from './illustration.png'
-import fullstack from './fullstack.png'
-import stack from './stack.png'
-import commands from './commands.png'
-import vim from './vim.png'
-import vimeditor from './vimeditor.png'
-import index from './index.png'
-import helloworld from './helloworld2.png'
-import dashboard from './dashboard.png'
-import newproject from './create-project.png'
-import droplet from './droplet.png'
-import dropletlandpage from './droplet-landpage.png'
-import datacenter from './data-center.png'
-import linuxdistros from './linux-distros.png'
-import os from './os.png'
-import cpu from './cpu.png'
-import hash from './hash.png'
+import Intro from './assets/intro.jpg'
+import fullstack from './assets/fullstack.png'
+import stack from './assets/stack.png'
+import commands from './assets/commands.png'
+import vim from './assets/vim.png'
+import vimeditor from './assets/vimeditor.png'
+import index from './assets/index.png'
+import helloworld from './assets/helloworld2.png'
+import addingssh from './assets/adding-ssh.png'
+import serverin from './assets/server-in.png'
+import dashboard from './assets/dashboard.png'
+import newproject from './assets/create-project.png'
+import droplet from './assets/droplet.png'
+import addArecord from './assets/adding-a-record.png'
+import addArecord2 from './assets/adding-a-record-2.png'
+import digresult from './assets/dig-result.png'
+import dropletlandpage from './assets/droplet-landpage.png'
+import domainstep1 from './assets/domain-step-1.png'
+import adddomain from './assets/add-domain.png'
+import hkgets from './assets/hkgetsitdgocean.png'
+import adddomain2 from './assets/add-domain-2.png'
+import prompt from './assets/prompt.png'
+import domainstep2 from './assets/domain-step-2.png'
+import nameservers from './assets/nameservers.png'
+import internetworks from './assets/internet-works.png'
+import location from './assets/location.png'
+import redirect2 from './assets/redirect-2.png'
+import vscodeclone from './assets/vscode-clone.png'
+import datacenter from './assets/data-center.png'
+import linuxdistros from './assets/linux-distros.png'
+import anatomyurl from './assets/anatomy-url.png'
+import os from './assets/os.png'
+import cpu from './assets/cpu.png'
+import hash from './assets/hash.png'
 
 export const meta = {
   author: 'Hermann Kanga',
   date: '2022-09-05',
-  title: 'An overview of Full stack developement',
+  title: 'An overview of full stack developement - (Part I)',
   description:
-    'We’ll dive deep into servers, work with the command line, understand networking and security, set up continuous integration and deployment, manage databases, and build containers.',
+    'We will dive deep into servers, work with the command line, learn the fundamentals of networking and security, set up continuous integration and deployment, learn how to manage databases, and build containers.',
 }
 
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
-Part I
+**Part I**
 
-In this two (2) parts article, we will learn what full-stack engineering means. We will also get hands-on with setting up our own server to build and deploy web applications from scratch.
+This is the first part of a comprehensive guide on full-stack engineering. <br/>
+We will start by understanding what it means, we will also get hands-on with setting up our own server to build and deploy a web application.
 
-<Image src={Illustration} alt="" />
+<Image src={Intro} alt="" />
 
-We’ll dive deep into servers, work with the command line, understand networking and security, set up continuous integration and deployment, manage databases, and build containers. The goal is to get some familiarity with the entire process, from the terminal all the way to building a web application hooked up to our own server.
+We will dive deep into servers, work with the command line, learn the fundamentals of networking and security, set up continuous integration and deployment, learn how to manage databases and build containers. <br/>
+
+The goal is to get some familiarity with the entire process, from the
+terminal, to building a web application hooked up to our own server.
 
 ## 📖 Table of contents
 
@@ -56,26 +77,18 @@ Part 2:
 
 ## What is a full stack engineering?
 
-Before we answer that question, let's talk about **modern computing**.<br/>
 Modern computing can be break down into three components :
 
-1. The UI : The visible part, the user interface a user interacts with (browser, mobile devices, desktop, etc..)
-2. The Server : Mainly responsible for sending data (APIs), but servers can also handle other tasks like logging, authentication etc..
+1. The UI : The visible part, the user interface a user interacts with (browser, mobile devices, desktop, etc..). The UI can be built using various front-end technologies like HTML, CSS, Javascript
+
+2. The Server : The application server often does the heavy lifting on the backend. Application servers physically or virtually sit between database servers storing application data and web servers communicating with clients (UI, a web browser, or a mobile app). Application servers support an application’s development and delivery. Unlike application server, the web server design is light enough to process static data requests for multiple applications. A Web server is primary responsible for serving web clients HTTP requests with HTTP responses. However web servers can also handle other tasks like logging, authentication etc..
+
 3. The Database : Where the data is stored. Database are also useful for **data analytics**.
 
 <Image src={fullstack} alt="" />
 
-Full stack engineering deals with not only the challenges of building a user interface but also everything else (database, server, etc..). <br/>
-Our goal today will be to cover the "everything else". We will see that
-the relationship between a server and a user interface is complex, there are a lot of rules to follow and a staggering amount of technologies that goes into allowing us to build user interfaces.
+Full stack engineering deals with the challenges of building a user interface but also everything else (database, server, etc..). Our goal is to cover the "everything else". We will see that the relationship between a server and a user interface is complex, there are a lot of rules to follow and a staggering amount of technologies that goes into allowing us to build user interfaces.
 Gaining this knowledge will give us not only the confidence to understand any system, but also the ability to put them together to create robust web applications.
-
-The plan is as follows:
-
-- A deep dive into servers and networking
-- Database overview
-- Understand how the internet works
-- Understand the relationship between all those systems
 
 An example of a few popular stack :
 
@@ -377,14 +390,378 @@ SSH is one of the most secure option when it comes to server authentication.
 
 **How SSH Works**?
 
-SSH stands for Secure Shell. When you connect through SSH, you will be dropped into a shell session, For the duration of your SSH session, any commands that you type into your local terminal are sent through an encrypted SSH tunnel and executed on your server.
+<Image src={hash} alt="" />
+
+Anybody can encrypt some data and send it to another user with the private key, who is the only one that can decrypt that data.
+This why SSH is such a powerful concept and the most secure way of authenticating users (at least,much stronger than a simple a username and a password ).
 
 **How SSH Authenticates Users**?
 
-**Hashing** is very important to understand SSH authentication.
-You can think of hashing as a sort of cryptographic blender: Data goes in, and a **hash** comes out based on that data, but if you’re given a hash, it’s mathematically impossible to reverse the algorithm and obtain the original data.
+SSH stands for Secure socket shell. When you connect through SSH, you will be dropped into a shell session, For the duration of your SSH session, any commands that you type into your local terminal are sent through an encrypted SSH tunnel and executed on your server.
 
-In practice, we take some data which is just a string of bits and bytes, we run it through a mathematical function called a **hash function** and the output is called a **hash** (an alphanumeric string).
+There are two part to an SSH key called a SSH key pair :
+
+- the public key : which can be shared with others. It is used to encrypt any kind of data (think of it as the salt to a hashing function).
+- the private key : which must only be known to the users.
+
+When we connect to a server, we are going to create an ssh key and keep the private key on our computer. Every message we send to the server will be encrypted with the public key, that way no one can read it.
+
+**Hashing** is very important to understand SSH authentication.
+Hashing is a one-way function (i.e., it is impossible to "decrypt" a hash and obtain the original plaintext value).
+
+You can think of hashing as a sort of _cryptographic blender_: Data goes in, and a **hash** comes out based on that data, but if you’re given a hash, it’s mathematically impossible to reverse the algorithm and obtain the original data. Hashing is appropriate for password validation. Even if an attacker obtains the hashed password, they cannot enter it into an application's password field and log in as the victim.
+
 There are different types of hash functions, take a look at the graph below :
 
 <Image src={hash} alt="" />
+
+- MD5 is no longer used nowadays because it's very predictable.
+- SHA1 is much more rigorous. MD5 hash gives us about 33 characters whereas SHA1 will give us 41 charaters.
+
+```bash
+$ echo password >> foo
+$ openssl sha1 foo
+
+SHA1(foo)= c8fed00eb2e87f1cee8e90ebbe870c190ac3848c
+```
+
+The problem is the output is the same given the same string like in our example above "foo".
+
+- SHA256 is the standard nowadays, the output is still the same given the same string, however it becomes a lot more difficult to implement a rainbow table attack because the number of characters of the hash is very long (65 characters).
+
+```bash
+$ echo password >> foo
+$ openssl sha256 foo
+
+SHA256(foo)=6b3a55e0261b0304143f805a24924d0c1c44524821305f31d9277843b8a10f4e
+```
+
+There is an even better way secure solution to add more protection, check out the graph diagram below :
+
+<Image src={hash} alt="" />
+
+A **salt** is a unique random number added to the hashing process to force their uniqueness and increase their complexity. Salting hashes allows us to guarantee a unique output, even when the inputs are the same. This unique output is called the **salted hash**.
+
+Why are spending a long time talking about hashing?
+
+Let's create an ssh key,
+
+```bash
+$ cd ~/.ssh
+$ ssh-keygen
+Generating public/private rsa key pair.
+The key fingerprint is: SHA256:S8lk7SSEVK5s2v8EDbJpFR5ezLVixOt9hWz4xATZlmg
+```
+
+once the key has been generated we can open the the public key, copy it and head back to digital ocean to finish setting up our server.
+
+```bash
+$ cat dgocean_rsa_v2.pub
+N83sYz0Ll5mM5BZ915IXgjA5erYtqGNuJ9cNaf0z8z7fKh90Xd6fWRTkyyFTb1J6QRt9CEHBMX8gfsTduRSJPGRFwVfjAWjg3rUVjZGAZj7tb0OItl6w6bFS3gwaKa13Bw/msIuG3ujJt8tq8cRpC70q16f76U
+```
+
+We click on "add a new ssh key", copy the public key, choose a hostname and click on "create droplet" :
+
+<Image src={addingssh} alt="" />
+
+And that's it, we created a server
+
+Once the server comes online, we are going to be assigned an ip address that we are going to use to connect to the server.
+
+Here are the most commonly used commands:
+
+1. SSH into the server
+
+```bash
+$ ssh root@<your_IP_address>
+```
+
+2. SSH into your server private key
+
+```bash
+$ ssh -i ~/.ssh/<your_private_key> root@<your_IP_address>
+```
+
+2.Exit your server
+
+```bash
+$ exit
+```
+
+If you did everything correctly you should see something like this:
+
+<Image src={serverin} alt="server in" />
+
+We are in!.
+
+### The internet
+
+We have a server and we logged into it with our ssh key , the next step is to buy a domain and connect it to the server. But before we jump into it, let's understand how the internet works.
+
+#### Terminology
+
+- `Internet` : network of networks
+- `Intranet` : private network
+- `LAN` : local area network
+- `WAN` : wide area network
+- `IP` : Internet protocol
+- `IP Address` : Numeric label assigned to a device connected to the internet
+- `TCP` : Transmission control protocol
+- `UDP` : User datagram protocol
+- `ICMP` : Internet control message protocol
+- `Packet` : Unit of data transmitted over a network
+
+#### How does the internet works?
+
+The core of the internet is built on cooperation and rules. Take a look at this diagram :
+
+<Image src={internetworks} alt="server in" />
+
+this is very simplified version version of how a requests works.
+
+1. Your computer has a network card
+2. The network card talk to a router which enables you to have an I.P address
+3. The router is connected to a modem that connects to your ISP (the organisation paid to provide internet access)
+4. The ISP is eventually going to connect to a Tier One ISP, known as the backbone of the internet
+5. Those Tier one ISP will likely connect to a data center somewhere in the world
+6. The data center will have a server cluster that can be owned by anybody
+7. The server cluster will likely have a load balancer to distribute the request load among the servers
+8. The load balancer is ultimately connected to your own server.
+
+#### Network Tool
+
+- `Chech the status of a network host` : is the host up or down?
+
+```bash
+$ ping google.com
+```
+
+- `Follow the path of your request` : From the router all the way up to the load balancer that serves the request
+
+```bash
+$ ping google.com
+```
+
+- `Show network status`
+
+```bash
+$ netstat -lt | less
+```
+
+#### TCP VS UDP
+
+#### DNS and URLS
+
+How do domains work?
+
+A domain name system (DNS) is comparable to a phone book. Instead of memorize an IP address like 127.0.0.1, you can remember google.com, netflix.com etc..
+
+Nameservers holds DNS records to translate domain name into IP addresses.
+Maps names to IP addresses are called namedservers
+
+1. We use the browser on our computer to browse google.com
+2. The browser send the request to nameservers
+3. Nameservers translate google.com into an ip and the request is sent to google server
+4. google server respond with some data
+
+There's two type of record :
+
+- DNS record, maps a name to an IP address
+- CNAME record, maps a name to another name
+
+To lookup the nameservers for a domain :
+
+```bash
+$ ns lookup google.com
+```
+
+To lookup the DNS record for a domain :
+
+```bash
+$ dig frontendmasters.com
+```
+
+#### The anatomy of a URL
+
+<Image src={anatomyurl} alt="server in" />
+
+We can break an URL down into three parts :
+
+- A subdomain : prefix the domain
+- A domain : yourdomain.com
+- TLD : top level domain, owned by organisation like ICAAN
+- A path : anything after the domain is called the path
+- Query parameters : anything after the path followed by a question mark
+
+#### Buying a domain name
+
+1. Go on <a href="http://www.hostinger.com">hostinger.com</a>, create an account and search for a domain. I'm going to purchase hkgetsit.tech :
+
+<Image src={domainstep1} alt="server in" />
+
+Once you purchase your domain, you should be redirected to a dashboard like this:
+
+<Image src={domainstep2} alt="server in" />
+
+2. We're going to update our nameservers to connect our server's ip address to our domain name.
+
+click on DNS/nameservers, change the nameservers to :
+
+- ns1.digitalocean.com
+- ns2.digitalocean.com
+- ns3.digitalocean.com
+
+<Image src={nameservers} alt="server in" />
+
+Digital ocean will be the authoritative answer as far as where the domain actually goes.
+
+Save it and on <a href="http://www.digitalocean.com">digitalocean.com</a> :
+
+click on the droplet, add domain, I'm going to add hkgetsit.tech :
+
+<Image src={hkgets} alt="server in" />
+
+you should be redirected to a page like this :
+
+<Image src={redirect2} alt="server in" />
+
+3. , add two A records with your IP address :
+
+- @ : just the domain (i.e hkgetsit.tech)
+- www :
+
+<Image src={addArecord} alt="server in" />
+
+<Image src={addArecord2} alt="server in" />
+
+At this point, if we have done everything right, the server should be connect to our domain.
+
+we can verify using the command we learnt earlier :
+
+```bash
+$ dig hkgetsit.tech
+```
+
+you should see a result similar to this :
+
+<Image src={digresult} alt="server in" />
+
+If you don't see it, it means that the changes have not been propagated yet, wait until it does.
+
+#### Update and restart a server
+
+Next, this is what we are going to do :
+
+- Update the server
+- Restart the server
+- Create a new user
+- Make that user a **superuser**
+- Enable login for the new user
+- Disable root login
+
+#### Update server
+
+1. SSH into the server
+2. Update the software by running the following command
+
+```bash
+apt update
+apt upgrade
+```
+
+Hopefully all your upgrades ran fine, there was no issues. Now we are going to restart the server :
+
+3. Restart the server
+
+```bash
+shutdown now -r
+```
+
+Once it's done, SSH back into your server.
+
+#### Create a new user
+
+There are two types of users :
+
+- root user : has the highest permission level. The root user is allow unrestricted access to the operating system.
+- sudo user : Super User Do. The superuser is allow to run commands and programs as root
+
+We don't want to run as root because we want to keep the permissions as minimal as possible, to avoid deleting important programs accidentally for example. These are the steps to follow to create a new user :
+
+1. Create a new user :
+
+```bash
+adduser <your_username>
+```
+
+2. Add user to 'sudo' group:
+
+```bash
+usermod -aG sudo <your_username>
+```
+
+3. Switch user :
+
+```bash
+su <your_username>
+```
+
+4. Check sudo access :
+
+```bash
+sudo cat /var/log/auth.log
+```
+
+#### Disable root access
+
+These are the steps to follow to disable root access:
+
+1. Create authorized_keys file : An authorized_keys file is where our key is stored. It means that whenever we log in as a user the public key will be checked and authenticated against the private key
+
+```bash
+cd ~
+mkdir .ssh
+touch authorized_keys
+```
+
+2. Paste your public key
+
+3. Exit :
+
+```bash
+exit
+```
+
+4. Login with new user :
+
+```bash
+ssh <your_username>@<your_ip>
+```
+
+if you have successfully logged in, you should see a prompt that looks like this:
+
+<Image src={prompt} alt="server in" />
+
+#### File permissions
+
+The next thing we need to do is to change the file permission. These are the steps to follow :
+
+1. Change file permissions
+
+```bash
+chmod 644 ~/.ssh/authorized_keys
+```
+
+> Check out this <a href="https://linuxhandbook.com/linux-file-permissions/">article</a> or more information about file permissions
+
+2. Disable root login by running the following command and
+
+```bash
+sudo vi /etc/ssh/sshd_config
+```
+
+3. Restart ssh daemon :
+
+```bash
+sudo service sshd restart
+```
