@@ -4,6 +4,8 @@ import Intro from './assets/intro.jpg'
 import fullstack from './assets/fullstack.png'
 import stack from './assets/stack.png'
 import commands from './assets/commands.png'
+import linuxfs from './assets/linuxfilesystem.png'
+import linuxfs2 from './assets/linuxfilesys.jpg'
 import vim from './assets/vim.png'
 import vimeditor from './assets/vimeditor.png'
 import index from './assets/index.png'
@@ -79,9 +81,9 @@ Part 2:
 
 Modern computing can be break down into three components :
 
-1. The UI : The visible part, the user interface a user interacts with (browser, mobile devices, desktop, etc..). The UI can be built using various front-end technologies like HTML, CSS, Javascript
+1. The UI : The user interface a user interacts with (browser, mobile device, desktop, etc..). The UI can be built using various front-end technologies like HTML, CSS, Javascript
 
-2. The Server : The application server often does the heavy lifting on the backend. Application servers physically or virtually sit between database servers storing application data and web servers communicating with clients (UI, a web browser, or a mobile app). Application servers support an application’s development and delivery. Unlike application server, the web server design is light enough to process static data requests for multiple applications. A Web server is primary responsible for serving web clients HTTP requests with HTTP responses. However web servers can also handle other tasks like logging, authentication etc..
+2. The Server : The application server often does the heavy lifting on the backend supporting an application’s development and delivery. Unlike application server, the web server design is light enough to process static data requests for multiple applications. A Web server is primary responsible for serving web clients HTTP requests with HTTP responses. However web servers can also handle other tasks like logging, authentication etc..
 
 3. The Database : Where the data is stored. Database are also useful for **data analytics**.
 
@@ -96,19 +98,20 @@ An example of a few popular stack :
 
 ## The command line
 
-A computer’s filesystem organizes the data stored by a computer, so that it can be easily retrieved by the user. Files are generally represented in a tree-like structure, in which any parent directory can have any number of children. The root directory is then found at the base of the tree.
-
-The command line allows a user to navigate the filesystem and run built-in programs or custom scripts. In Unix, the command line interface is called **Bash**, and the shell prompt is the `$` (dollar sign).
+We are going to spend a lot of time in the terminal. It is arguably the most fast and efficient way of talking to a computer. MacOs has a built in terminal but we are going to use [iterm2](https://iterm2.com/).
 
 ### Create, view files
 
-The reason why we want to talk about the command line is that we are going to spend a lot of time in the terminal. The terminal is arguably the most fast and efficient way of talking to a computer.
-MacOs has a built in terminal but we are going to use [iterm2](https://iterm2.com/).<br/>
+A computer’s file system organizes the data stored by a computer, so that it can be easily retrieved by the user. Files are generally represented in a tree-like structure, in which any parent directory can have any number of children.<br/> The root directory is found at the base of the tree.
+
+<Image src={linuxfs2} alt="" />
+
+The command line allows a user to navigate the file system and run built-in programs or custom scripts. In Unix, the command line interface is called **Bash**, and the shell prompt is the `$` (dollar sign).
 
 Here are some common commands :
 
 - `pwd`: Print Working Directory. <br/>
-  The shell command `pwd` displays the file path from the root directory to the current working directory.
+  `pwd` displays the file path from the root directory to the current working directory.
 
 ```bash
 $ pwd
@@ -116,7 +119,7 @@ $ pwd
 ```
 
 - `mkdir`: Make Directory <br/>
-  The shell command `mkdir` is used to make a new directory in the filesystem according to its argument. If a file path is given, the new directory will be placed at the end. Otherwise, it will create a new directory in the current working directory.
+  `mkdir` is used to make a new directory.
 
 ```bash
 $ mkdir new-directory
@@ -124,8 +127,8 @@ $ ls
 old-directory    new-directory
 ```
 
-- `ls`: List
-  The shell command `ls` is used to list the contents of a directory. If no arguments are given, it will list the contents of the current working directory.
+- `ls`: List <br/>
+  `ls` is used to list the content of a directory. If no argument is given, the content of the current working directory will be displayed.
 
 ```bash
 $ ls Desktop
@@ -133,16 +136,16 @@ resume.pdf
 photo.png
 ```
 
-- `cd`: Change Directory
-  The shell command `cd` is used to move throughout the filesystem of a computer. It accepts a variety of arguments: full file paths, names of children of the current directory, `..` the parent of the current directory
+- `cd`: Change Directory <br/>
+  `cd` is used to move throughout the file system of a computer. It accepts a variety of arguments: full file paths, names of children of the current directory, `..` the parent of the current directory
 
 ```bash
 $ cd some-directory
 $ cd ..
 ```
 
-- `touch`: Create New File
-  The shell command `touch` creates a new file in the current working directory with the name provided.
+- `touch`: Create New File <br/>
+  `touch` creates a new file in the current working directory with the name provided.
 
 ```bash
  $ touch grocery-list.txt
@@ -169,11 +172,11 @@ Here are the main features of the Vim editor:
 - Opening files in multiple tabs.
 - Creating macros to execute a sequence of commands.
 
-Vim has three modes of operation:
+Vim has three modes :
 
-- COMMAND MODE : Execute commands like undo, redo, find, replace, quit, etc.
-- INSERT MODE : Type and edit text.
-- VISUAL MODE : Highlight, select and edit text.
+- **COMMAND MODE** : Execute commands like undo, redo, find, replace, quit, etc.
+- **INSERT MODE** : Type and edit text.
+- **VISUAL MODE** : Highlight, select and edit text.
 
 Vim can be launched directly from the terminal by running the `vim` command.
 
@@ -185,7 +188,7 @@ The start screen will look like this:
 
 <Image src={vim} alt="" />
 
-for exiting Vim on the terminal:
+to quit Vim run the command :
 
 ```bash
 :q!
@@ -199,7 +202,7 @@ While this will close the current buffer, it will not save any changes made in t
 - `:!qa`: Closes Vim without warning by ending all file buffers and not saving their changes.
 - `:qa`: Will not close Vim if there are any unsaved changes.
 
-A file named `filename.txt` can be opened in the Vim editor. If `filename.txt` does not exist, the file will be created:
+Let's create a file named `filename.txt` and open it in the Vim editor :
 
 ```bash
 vim filename.txt
@@ -213,7 +216,8 @@ check out these links to learn more about vim:
 
 ### Shell
 
-The shell is the actual application running in the terminal. The shell interprets the commands and converts them into a language that the OS can understand. OS X for mac users uses `zsh` these days which is a more extensible version of `bash`.
+The shell is the actual application running in the terminal. The shell interprets the commands and converts them into a language that the OS can understand.
+OS X for mac users uses `zsh` which is a more extensible version of `bash`.
 Here are some common commands :
 
 - The shell command `echo $0` displays the current shell :
@@ -231,20 +235,20 @@ Check out this <a target="_blank" href="https://ohmyz.sh/">link</a> for more inf
 
 ## Servers
 
-> To complete this part, you will need: Node.js installed on your computer. <br /> We are using version 19.0.0. Check out this [link](https://nodejs.org/en/download) to Install Node.js.
+> To complete this part, you will need: Node.js installed on your computer. <br /> We are using version 19.0.0. Check out this [link](https://nodejs.org/en/download) to install Node.js.
 
-The next step after this brief overview of the command line is discussing servers.
-We are going to look at cloud computing, VPS, operating systems and SSH and hashing.
+The next step after this brief overview of the command line will be discussing servers.
+{/* We are going to look at cloud computing, VPS, operating systems and SSH and hashing. */}
 
-### What is a server?
+{/* ### What is a server? */}
 
-A server is essentially a computer that listen and responds to requests coming over the network. However, we usually think of servers as **dedicated hardware** for a variety of reasons. The main reasons are :
+{/* A server is essentially a computer that listens and responds to requests coming over the network. However, we usually think of servers as **dedicated hardware** for a variety of reasons. The main reasons are : */}
 
-- **availability**: a server has to be available 100% of the time otherwise the webpage goes down, your users lose access to their service
+{/* - **availability**: a server has to be available 100% of the time otherwise the webpage goes down, your users lose access to their service */}
 
-- **efficiency** : a server has to fast and reliable. A slow server can (...)
+{/* - **efficiency** : a server has to fast and reliable. A slow server can (...) */}
 
-Servers generally run on a different chipset than the one we use on our computers for different reasons like virtualization (more on that later when we get to cloud computing)or efficiency (more efficient than the home computer, this is why a server chip is very expensive.)
+{/* Servers generally run on a different chipset than the one we use on our computers for different reasons like virtualization (more on that later when we get to cloud computing)or efficiency (more efficient than the home computer, this is why a server chip is very expensive.) */}
 
 ### Creating a simple node.js server
 
@@ -276,22 +280,22 @@ server.listen(PORT)
 console.log(`server is listening to port ${PORT}`.)
 ```
 
-- We used the `require()` method to include the `HTTP` module. The `HTTP` module is a built-in node module that allows `Node.js `to transfer data over the Hyper Text Transfer Protocol (HTTP).
+- First, we imported the `HTTP` module. The `HTTP` module is a built-in node module that allows us to transfer data over the Hyper Text Transfer Protocol (HTTP).
 
-- `fs` is also built-in node module that allow us to work with the file system on the computer.
-  Common use for the file System module includes: Read files, Create files, Update files, Delete files, Rename files. We need the `fs` module because we are going to serve files.
+- `fs` is also built-in node module that allows us to work with the file system on the computer.
+  Common uses of the file System module includes: Read, create, update, delete, rename files. We need the `fs` module because we are going to serve files.
 
-- We defined our Port : 8000 and save it in variable called `PORT`
+- We defined our server port : 8000 and save it in variable called `PORT`
 
-- The HTTP module can create an HTTP server that listens to server ports and gives a response back to the client. The `http.createServer()` method takes a function, that accepts two arguments `req` and `res` or request and response and returns a response. The response is an object with a lot of properties (more on that later) but for now, we are using the `writeHead()` method to write a header which is a part of a server response. Headers are metadata attached to the other part of the server response, the `body`. Headers can help us determine if a user is logged in or not, verify the cookies, or check the status code etc.. `200` is the `OK` HTTP status code and just to be as explicit as possible, we've added a second argument which is an object that helps the client determines the response data type, which is an` html` file.
+- The `http.createServer()` method takes a function, that accepts two arguments `req` and `res` or request and response. The response is an object with a lot of properties (more on that later). We are using the `writeHead()` method to write a header. Headers are metadata attached to the server response. Headers can help us determine if a user is logged in or not, verify the cookies, or check the HTTP status. `200` is the `OK` HTTP status code and just to be as explicit as possible, we added a second argument which is an object that helps the client determines the response data type, which is an` html` file.
 
-- Next, we created a read stream. Streams allow us to read from or write to a source continuously, thus eliminating the need to fit all the data in memory at once. With stream we can start processing data almost immediately instead of waiting for the entire payload making it a suitable tool for large data transfer.
+- We also created a read stream. Streams allow us to read from or write to a source continuously, thus eliminating the need to fit all the data in memory at once. With stream we can start processing data almost immediately instead of waiting for the entire payload making it a suitable tool for large data transfer.
 
-- The server is created and the function passed into `createServer()` will be executed when someone tries to access the computer on port `8000`. To open that port, we called the `listen()` method and passed into it our variable `PORT`.
+- The server is created and the function passed into `createServer()` will be executed when we'll open the browser on port `8000`. To open that port, we called the `listen()` method and passed into it our variable `PORT`.
 
-- finally, it's nice to know that the server is running, so we logged a message to the console.
+- Finally, it's nice to know that the server is running, so we logged a message to the console.
 
-3. The last file we need is the `html` file that we can create running this command
+3. The last file we need is the `html` file that we will serve. We can create it by running this command
 
 ```bash
 vim index.html
@@ -301,7 +305,7 @@ vim index.html
 
 <Image src={index} alt="" />
 
-4. To run the server we can run the following command:
+4. To start the server we can run the following command:
 
 ```bash
 node server.js
@@ -313,19 +317,21 @@ if we open `localhost:8000` in the browser, we should see our html page :
 
 ### Server management
 
-We have a server up and running and it's serving an html page, but how can we scale it? how can we make it accessible and available for users all around the world? Also, what happens if the server goes down, how do we make sure we don't rely on only one server in case of a failure? All those questions need to be addressed in our server management strategy.
+We have a web server up and running and it's serving an html page but how can we scale it? How can we make it accessible and available for users all around the world? Also, what happens if the server goes down, how do we make sure that we don't rely on only one server in case of failure? All those questions need to be addressed in our server management strategy.
 
-Not so long ago, companies were running their own server farm in their basements. Nowadays for various reasons we moved into another direction : **cloud computing**. Cloud computing is the idea of a giant data center somewhere, where you can purchase resources from, depending on your need. Companies like [AWS](https://aws.amazon.com/console/), [Digital Ocean](https://www.digitalocean.com/), [Rackspace](https://www.rackspace.com/) etc.. offer a myriad of services that allow users to host their applications in the cloud and manage their servers more efficiently.
+All digital data and systems have to exist and be hosted somewhere in the real world.
+A company website you visit online, or an app on your phone can all be traced back to where they are hosted: a real machine.
+Not so long ago, most companies used to run their website on their own machine called physical servers. A physical server is any machine with, CPU, GPU, RAM, storage, power supply unit, network interface,etc..., typically designed to run 24/7 and used to run applications that serve other computers, such as web servers.
 
-The secret that makes cloud computing so valuable is the concept of **virtualization**. Virtualization is dividing a server resources into a virtual computer. A virtual computer is a digital version of a physical computer (the memory, the hardware, the GPU etc..). We don't tend to do that nowadays because of the complexity and the cost related to this process.
-What is more interesting is buying your own servers and scale them up and down depending on your need. It's called **VPS** or **Virtual Private Server** and most modern applications like **Netflix**, **Amazon** **Facebook** etc.. use **VPS**.
+Today, the scale has shifted, modern companies use virtual servers. A virtual server is a digital replica of a physical server.
+Companies like [AWS](https://aws.amazon.com/console/), [Digital Ocean](https://www.digitalocean.com/), [Rackspace](https://www.rackspace.com/) etc.. offer a myriad of services that allow users to host their applications in the cloud, providing the performance and scalability that these applications need. Virtualization is the secret behind big tech companies success and the reason why they can offer efficient resources at global scale while maximizing their hardware.
 
-### Buying a VPS
+### Buying a VPS (virtual private server)
 
-So far, we've learned what a server does and how to create one locally. Let's
-try and purchase a virtual private server running in the cloud.
+So far, we've learned what a web server does and how to create one locally. <br/> Let's
+purchase a virtual private server to host our node server in the cloud.
 
-In the browser, let's navigate to <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a>. After creating an account and you should land on a dashboard like this :
+In the browser, let's navigate to <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a>. After creating an account, you should land on a dashboard like this :
 
 <Image src={dashboard} alt="" />
 
@@ -333,7 +339,7 @@ Let's create a new project :
 
 <Image src={newproject} alt="" />
 
-Digital ocean calls server droplets. So let's create a new droplet :
+Digital ocean servers are called droplets. Click on the `create` button to create a new droplet:
 
 <Image src={droplet} alt="" />
 
@@ -341,7 +347,9 @@ You should land on a page like this :
 
 <Image src={dropletlandpage} alt="" />
 
-We are going to choose a region. This is important because we want to choose the closest region to where we think our visitors are going to be.
+#### The region and the operating system
+
+We are going to choose a region. This is important because we want to choose the closest region to our potential users.
 
 Next we choose the data center :
 
@@ -349,15 +357,15 @@ Next we choose the data center :
 
 For the operating system, we are going to choose **Ubuntu** , the LTS (LTS stands for long term support) version in 64 bit.
 
-An Operating system in the (at least in Unix terms) is made up of three components:
+An Operating system (at least in Unix terms) is made up of three components:
 
 <Image src={os} alt="" />
 
-- The program or utilities : `mkir`, `ls`, `rmdir` etc.. these are programs and utilities built in the operating system. With unix everything is either or file that you interact with or a process running. It's a very simple mental model.
+- `The program or utilities` : `mkir`, `ls`, `rmdir` etc.. these are programs and utilities built in the operating system. With unix everything is either or file that you interact with or a process running. It's a very simple mental model.
 
-- The Kernel: main part of the operating system that communicates directly with the hardware.
+- `The Kernel`: main part of the operating system that communicates directly with the hardware.
 
-- The hardware.
+- `The hardware`.
 
 There are two basic types of operating systems :
 
@@ -380,7 +388,9 @@ Going back to [Digital Ocean](https://www.digitalocean.com/), for the the size o
 
 <Image src={cpu} alt="" />
 
-Finally, the authentication method, how do we get into the server? how do we connect into it? there are two options available :
+#### The authentication method
+
+How do we get into the server? How do we connect into it? there are two options available :
 
 - Password
 - SSH keys.
