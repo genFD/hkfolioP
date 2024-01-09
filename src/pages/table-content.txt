@@ -97,3 +97,343 @@ Security :
 - Orchestration
 - Load balancers
 - Deployments : Ansible, Vagrant, Puppet
+
+
+**Hashing** is very important to understand SSH authentication.
+Hashing is a one-way function (i.e., it is impossible to "decrypt" a hash and obtain the original plaintext value).
+
+You can think of hashing as a sort of _cryptographic blender_: Data goes in, and a **hash** comes out based on that data, but if you’re given a hash, it’s mathematically impossible to reverse the algorithm and obtain the original data. Hashing is appropriate for password validation. Even if an attacker obtains the hashed password, they cannot enter it into an application's password field and log in as the victim.
+
+There are different types of hash functions, take a look at the graph below :
+
+<Image src={hash} alt="" />
+
+- MD5 is no longer used nowadays because it's very predictable.
+- SHA1 is much more rigorous. MD5 hash gives us about 33 characters whereas SHA1 will give us 41 charaters.
+
+```bash
+$ echo password >> foo
+$ openssl sha1 foo
+
+SHA1(foo)= c8fed00eb2e87f1cee8e90ebbe870c190ac3848c
+```
+
+The problem is the output is the same given the same string like in our example above "foo".
+
+- SHA256 is the standard nowadays, the output is still the same given the same string, however it becomes a lot more difficult to implement a rainbow table attack because the number of characters of the hash is very long (65 characters).
+
+```bash
+$ echo password >> foo
+$ openssl sha256 foo
+
+SHA256(foo)=6b3a55e0261b0304143f805a24924d0c1c44524821305f31d9277843b8a10f4e
+```
+
+There is an even better way secure solution to add more protection, check out the graph diagram below :
+
+<Image src={hash} alt="" />
+
+A **salt** is a unique random number added to the hashing process to force their uniqueness and increase their complexity. Salting hashes allows us to guarantee a unique output, even when the inputs are the same. This unique output is called the **salted hash**.
+
+Why are spending a long time talking about hashing?
+
+### Permisions and chmod
+
+check this article to fine tune <a href="https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/">article</a>
+
+When we run the command `ls -la`, we often see rw or rwx, but what does it mean?
+
+- `r` stands for read which is codified as `4`
+- `w` stands for write which is codified as `2`
+- `x `stands for execute which is codified as `1`
+
+These are called permissions. These permissions are broken up into groups.
+
+- owner
+- group
+- evryone else
+
+<Image src={permission} alt="permission" />
+
+In the example above :
+
+- `777` means we gave read, write and execute permission to the owner, group and everyone else.
+- `600` means we gave read and write permission to the owner and blocked access for group and everyone else.
+
+check out more example below :
+
+<Image src={chmod} alt="permission" />
+
+check out this <a href="https://quickref.me/chmod">cheatheet</a> for more information
+
+
+{/\* <a href="https://spinnaker.io/">Spinaker</a> is an open-source, multi-cloud continuous
+delivery platform that combines a powerful and flexible pipeline management system
+with integrations to the major cloud providers.
+
+We're going to make a fake CI/CD, but the first to do is a stopwatch.
+In order to do that we use a cron. Cron means do this tasks at certain intervals.
+
+So what we want to do is :
+
+1. create a bash script that git pulls from main branch
+2. create a cron job to execute script every 2 minutes
+
+bash/Shell scripts allow us to program commands in chains and have the system execute them as a scripted event, just like batch files. \*/}
+
+
+_how do you make something redirect from nginx?_
+
+<Image src={redirectnginx} alt="cron" />
+
+GZIP
+
+is a compression algorithm that is run to compress files making it easier to send files over the wire. The browser knows how to unpack them, the nginx knows how to pack them up.
+
+_how to create a subdomain?_
+
+## Realtime and database
+
+### Websockets
+
+Websockets are real time communication. It's a persistennt biderectional connection between client and server. How is that different from http? http is not persistent, websockets is.
+
+these are the steps we will follow :
+
+1. Update nginx configuration
+2. Create new nodejs server
+3. Enable websockets
+
+##### Update nginx configuration
+
+to go to our default server run this command :
+
+```bash
+cd /etc/nginx/sites-enabled/
+sudo vi <name_of_default_server>
+```
+
+in the configuration file add these directives to the location block like so :
+
+<Image src={websockconf} alt="cron" />
+
+With these two line we added the ability to have websockets.
+
+validate nginx config file and restart nginx
+
+```bash
+nginx -t
+sudo service nginx restart
+```
+
+Now that nginx has the ability to handle websocket connections, we're going to create a server. We're going to use Express this time around. Express is the a popular node framework. We're also going to use vscode. So open open vs code , create a new folder and clone the repo
+
+```bash
+git clone <link_to_your_github_repo>
+```
+
+- Install express by running this command :
+
+```bash
+npm install express
+```
+
+- create a new file
+
+```bash
+touch index-ws.js
+```
+
+copy this into the file :
+
+```js
+const express = require('express')
+const server = require('http').createServer()
+const app = express()
+
+app.get('/', function (req, res) {
+  res.sendFile('index.html', { root: __dirname })
+})
+
+server.on('request', app)
+server.listen(8000, function () {
+  console.log('listening on port 8000')
+})
+```
+
+- create an `index.html` file
+
+```bash
+touch index.html
+```
+
+and add this text to the file : 'websocket example'
+
+- start the server
+
+```bash
+node index-ws.js
+```
+
+you should see this :
+
+<Image src={vscodestartserver} alt="cron" />
+
+Open the browser and go to localhost:8000 :
+
+<Image src={websocketbrowser} alt="cron" />
+
+Next let's dive in and create the actual web sockets.
+
+We're going to use a library called <a href="https://www.npmjs.com/package/ws">ws</a>
+
+- Install ws library :
+
+```bash
+npm install ws
+```
+
+still in the index-ws.js, add this to the file :
+
+```js
+// websockets
+
+const websocketsServer = require('ws').Server
+const wss = new websocketsServer({ server: server })
+
+wss.on('connection', function connection(ws) {
+  const numOfClients = wss.clients.size
+  console.log(`clients connected : ${numOfClients}`)
+  wss.broadcast(`current visitors : ${numOfClients}`)
+  if (ws.readyState === ws.OPEN) {
+    ws.send('welcome to websocket server')
+  }
+  ws.on('close', function close() {
+    console.log('clients disconnected')
+  })
+})
+
+wss.broadcast = function broadcast(data) {
+  wss.clients.forEach(function each(client) {
+    client.send(data)
+  })
+}
+```
+
+- we required the websocket server
+- we created a new instance of the websocket connection, passed to it the express server that we created and saved it in a variable called "wss"
+- Next websockets has this idea of states. We want to do actions when the web sockets connect. To do that we used `'ws.on'` and the event we want to listen to is 'connection', the action to run everytime there's a connection is a callback function that takes `ws` as argument
+  - and console.log the number of clients connected.
+  - We also used something called the `broadcast` command to send a message to everybody connected the number of people connected
+  - we handling a couple of states. a socket can be open, closed or errored:
+    - if the state is open we are going to send a message to the client 'welcome to my websocket server'
+    - when the connection close we console.log 'a client has disconnected'
+  - finally we had to write the `broadcast` function which just send a message to every client
+
+Now we're going to create a websocket connection in our `index.html` that allows us to deal with our websocket connection
+
+In our index.html file, we can add this :
+
+```html
+<html>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+    </head>
+    <body>
+      Welcome to WebSocket
+    </body>
+    <script>
+      let ws
+      const proto = window.location.protocol === 'https' ? 'wss' : 'ws'
+      ws = new WebSocket(`${proto}://${window.location.host}`)
+      ws.onmessage = (event) => {
+        console.log(event.data)
+      }
+    </script>
+  </html>
+</html>
+```
+
+- In the script tag we :
+  - pulled the protocol from `window.location.protocol`. The protocol will tell us if it is http or https, if it's https we want to choose 'wss' otherwise 'ws'
+  - built the websocket by creating a new instance of websocket which is built-in in the window object and pass to it the protocol and it should give back to us our domain back.
+  - made our websocket respond to any messages we get from the server
+
+If you open the browser and go to localhost:8000 you should see this :
+
+<Image src={wbsockconnect} alt="cron" />
+
+It's messaging our current visitors and the message "welcome to websocket server"
+
+if we open a second tab and go to localhost 8000 the number of visitors should be 2
+
+<Image src={wbsockconnect2} alt="cron" />
+
+and that's the power of websockets :
+
+- It's real time, we don't have to force a refresh or force an http update or push it to the client
+- you can control the entire client via the server
+
+The last thing we need to do, is push our code so the sever can pull it down and we'lss see if it's working on our domain
+
+so in the terminal run the command :
+
+```bash
+git add .
+git commit -m "init"
+git push origin main
+```
+
+Jump back to the server, the cron job that we set up earlier should have already pulled down the files automatically. if run these commands :
+
+```bash
+cd /var/www/app
+ls -la
+```
+
+you should see this the html file, the index-ws.js etc.. :
+
+<Image src={newfileserver} alt="cron" />
+
+we will modify our script to install the modules automatically everytime we pull down from the repository
+
+edit the script
+
+```bash
+vi github.sh
+```
+
+and add `npm install` to the script and save
+
+install the modules by running the following command :
+
+```bash
+npm install
+```
+
+we're going to stop our node server by running the command :
+
+```bash
+pm2 stop app.js
+```
+
+and start back up with our new server, adding `--watch` to ensure if we make any changes pm2 restart our server :
+
+```bash
+pm2 start index-ws.js --watch
+pm2 save
+```
+
+The new websocket server should be up and running, open the browser and go to your domain you should see this :
+
+{/* <Image src={} alt="cron" /> */}
+
+so we just :
+
+- created a web socket connection
+- Updated nginx
+  and now we have a real time connection running through our domain.
