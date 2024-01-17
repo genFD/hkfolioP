@@ -1,13 +1,12 @@
 import { ArticleLayout } from '@/components/ArticleLayout'
 import Image from 'next/image'
 import Intro from './assets/intro.jpg'
-import fullstack from './assets/fullstack.png'
 import stack from './assets/stack.png'
-import commands from './assets/commands.png'
-import linuxfs from './assets/linuxfilesystem.png'
 import linuxfs2 from './assets/linuxfilesys.jpg'
+import osedu from './assets/osedu.png'
 import vim from './assets/vim.png'
 import vimeditor from './assets/vimeditor.png'
+import vimnavigate from './assets/vimnav.png'
 import index from './assets/index.png'
 import helloworld from './assets/helloworld2.png'
 import chooseOs from './assets/choose-os.png'
@@ -20,10 +19,10 @@ import newproject from './assets/create-project.png'
 import droplet from './assets/droplet.png'
 import addArecord from './assets/adding-a-record.png'
 import addArecord2 from './assets/adding-a-record-2.png'
+import appserver from './assets/application servers.jpg'
 import digresult from './assets/dig-result.png'
 import dropletlandpage from './assets/droplet-landpage.png'
 import domainstep1 from './assets/domain-step-1.png'
-import adddomain from './assets/add-domain.png'
 import onlineServer from './assets/online-server.png'
 import hkgets from './assets/hkgetsitdgocean.png'
 import adddomain2 from './assets/add-domain-2.png'
@@ -44,7 +43,7 @@ import hash from './assets/hash.png'
 export const meta = {
   author: 'Hermann Kanga',
   date: '2023-09-05',
-  title: 'An overview of full stack developement - (Part I)',
+  title: 'An overview of full stack development - (Part I)',
   description:
     'We will dive deep into servers, work with the command line, learn the fundamentals of networking and security, set up continuous integration and deployment, learn how to manage databases, and build containers.',
 }
@@ -52,7 +51,7 @@ export const meta = {
 export default (props) => <ArticleLayout meta={meta} {...props} />
 
 This is the first part of a comprehensive guide on full-stack engineering. <br/>
-We will start by understanding what it means, we will also get hands-on with setting up our own server to build and deploy a web application.
+We will start by understanding what it means, we will also get hands-on with setting up our own server to build and deploy a web application in the cloud.
 
 <Image src={Intro} alt="" />
 
@@ -73,10 +72,14 @@ Part I:
 Part 2:
 
 - Application setup
-- Git
-- Continous Integration and Deployment
-- Realtime & Databases
+- Security
+- Continous Integration and Delivery
+- Loggins and redirection
+- Subdomains
+- Databases
+- HTTPS and
 - Containers
+- Load balancer
 
 ## What is a full stack engineering?
 
@@ -84,11 +87,9 @@ Modern computing can be break down into three components :
 
 1. **The UI** - The user interface a user interacts with (browser, mobile device, desktop, etc..). The UI can be built using various front-end technologies like HTML, CSS, Javascript
 
-2. **The Server** - There are two types of servers : Web server and Application server. Application server often does the heavy lifting on the backend supporting an application’s development and delivery. Unlike application server, web server design is light enough to process static data requests for multiple applications. A Web server is primary responsible for serving web clients HTTP requests with HTTP responses. However web servers can also handle other tasks like logging, authentication etc..
+2. **The Server** - the term “server” can refer to either a type of software that enable applications to communicate with one another or the hardware that supports an application’s development and delivery. To learn more about servers, check out this very interesting <a target="_blank" href="https://www.digitalocean.com/community/conceptual-articles/cloud-servers-an-introduction">article</a> .
 
-3. **The Database** : Where the data is stored. Database are also useful for data analytics.
-
-{/* <Image src={fullstack} alt="" /> */}
+3. **The Database** : Data is pivotal in today’s applications and websites developement. From the items in your shopping list to the comments left on your favorite video streaming application, they are all considered bits of information that can be stored in a database (More on that in part 2).
 
 Full stack engineering deals with the challenges of building a user interface but also everything else (database, server, etc..). Our goal is to cover the "everything else". We will see that the relationship between a server and a user interface is complex, there are a lot of rules to follow and a staggering amount of technologies that goes into allowing us to build user interfaces.
 Gaining this knowledge will give us not only the confidence to understand any system, but also the ability to put them together to create robust web applications.
@@ -99,7 +100,11 @@ An example of a few popular stack :
 
 ## The command line
 
-We will spend a lot of time in the terminal. It is arguably the most fast and efficient way of talking to a computer. MacOs has a built in terminal but we are going to use [iterm2](https://iterm2.com/).
+We will spend a lot of time in the terminal because it is arguably the most fast and efficient way of talking to a computer. MacOs has a built in terminal but we are going to use <a href="https://iterm2.com/" target='_blank'>iterm2.</a>
+
+The terminal interacts with a program often referred to as the shell, which is the command line interface that exposes human input from the terminal to the operating system. Unlike the terminal, the shell is what actually processes the commands, whereas the terminal is just the text-based interface to interact with the shell.
+
+In Unix, the shell is called **Bash** (The Bourne Again Shell), and the prompt is the `$` (dollar sign).
 
 ### Create, view files
 
@@ -107,7 +112,7 @@ A computer’s file system organizes the data stored by a computer, so that it c
 
 <Image src={linuxfs2} alt="" />
 
-The command line allows a user to navigate the file system and run built-in programs or custom scripts. In Unix, the command line interface is called **Bash**, and the shell prompt is the `$` (dollar sign).
+The command line allows us to navigate the file system and run built-in programs or custom scripts.
 
 Here are some common commands :
 
@@ -160,24 +165,20 @@ $ cd ..
 
 ### Editing files
 
-[Vim](https://www.vim.org/) is a screen-based text editor that is free, open-source, and based on the vi editor that was originally created for the Unix operating system. However, it can be run on other systems such as Windows, Mac, Linux, or Android.
+To edit a file, we can use a program called `nano`. In the terminal, execute the following command to edit a file with `nano`:
 
-Developers will find it useful for working on source code or scripting files, but **Vim** is ideal for editing configuration files when working from the terminal.
+```bash
+vi [file] - Edit file.
+```
 
-Here are the main features of the Vim editor:
+While `nano` is great for simple edits, `vi` and `emacs` have more advanced and powerful features. There is a learning curve to using these editors as they are not exactly intuitive.
+To edit a file with `vi`, use the command :
 
-- Text completion for faster editing.
-- Ability to compare differences between files and merge them.
-- Ability to search with <a target="_blank" href="https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference">Regular expression</a>.
-- Ability to perform a wide range of tasks such as navigating to specific locations within a document, or replacing specific text, using a suite of commands.
-- Opening files in multiple tabs.
-- Creating macros to execute a sequence of commands.
+```bash
+vi [file] - Edit file.
+```
 
-Vim has three modes :
-
-- **COMMAND MODE** : Execute commands like undo, redo, find, replace, quit, etc.
-- **INSERT MODE** : Type and edit text.
-- **VISUAL MODE** : Highlight, select and edit text.
+[Vim](https://www.vim.org/) stands for "Vi Improved".&#32; It's also a text editor that is free, open-source, and based on the `vi` editor that was originally created for the Unix operating system. However, it can be run on Windows, Mac, Linux, or Android.
 
 Vim can be launched directly from the terminal by running the `vim` command.
 
@@ -189,71 +190,153 @@ The start screen will look like this:
 
 <Image src={vim} alt="" />
 
-to quit Vim run the command :
+`Vim` is very popular amongst developers. They will find it useful for working on source
+code or scripting files, but `Vim `is also ideal for editing configuration files
+when working from the terminal.
 
-```bash
-:q!
-```
+`Vim` has this concept of **modes**. You are always working in one of three modes: `command mode`, `insert mode`, or `line mode`. When `Vim` starts you are placed into `command mode`. To get back to `command mode` at any time hit the escape key (Esc).
 
-While this will close the current buffer, it will not save any changes made in the file. Here are some recommended safeguards :
+#### Command mode
 
-- `:!wq`: Closes the current file buffer and saves the changes.
-- `:!xa`: Saves all changes and exits Vim.
-- `!wqa`: Works the same as the `:!xa` command.
-- `:!qa`: Closes Vim without warning by ending all file buffers and not saving their changes.
-- `:qa`: Will not close Vim if there are any unsaved changes.
+Command mode allows you to navigate the file, perform searches, delete text, copy text, and paste text.
 
-Let's create a file named `filename.txt` and open it in the Vim editor :
+Here are some commonly used key for navigation :
 
-```bash
-vim filename.txt
-```
+- `k` - Up one line.
+- `j` - Down one line.
+- `h` - Left one character.
+- `l` - Right one character.
+- `w` - Right one word.
+- `b` - Left one word.
+- `^` - Go to the beginning of the line.
+- `$` - Go to the end of the line.
 
-Check out these links to learn more about vim:
+Note that commands are case sensitive. For example, if you want to move down one line type the
+lowercase `j`. The uppercase `J` joins lines together. It's also possible to navigate using the arrow keys on your keyboard.
 
-- https://vim.fandom.com/wiki/All_the_right_moves
-- https://linuxmoz.com/vi-commands-cheat-sheet/
-- https://www.openvim.com/
+<Image src={vimnavigate} alt="" />
 
-### Shell
+#### Insert mode
 
-The shell is the actual application running in the terminal. The shell interprets the commands and converts them into a language that the operating system can understand.
-OS X for mac users uses `zsh` which is a more extensible version of `bash`.
-Here are some common commands :
+To enter `insert mode`, press one of the following keys :
 
-- The shell command `echo $0` displays the current shell :
+- `i` - Insert at the cursor position.
+- `I` - Insert at the beginning of the line.
+- `a` - Append after the cursor position.
+- `A` - Append at the end of the line.
 
-```bash
-$ echo $0
-zsh
-```
+After entering insert mode, type the desired text. When you are finished, type Esc to return to `command mode`.
 
-- The shell command `source <shell config location>` will reload the terminal. This is important when you modify you shell configuration.
+#### Line mode
 
-- The shell command `vi ~/.zshrc` will open the current shell configuration.
+To enter line mode you must start from command mode and then type a colon `(:)` character. If
+you are in insert mode, type Esc to get back to command mode and then type a colon for line
+mode.
 
-Check out this <a target="_blank" href="https://ohmyz.sh/">link</a> for more information about terminal configuration.
+Here are some of the most common line mode commands to know :
+
+- `:w` - Writes (saves) the file.
+- `:w!` - Forces the file to be saved even if the write permission is not set. This only works on files
+  you own.
+- `:q` - Quit. This will only works if there have not been any modifications to the file.
+- `:q!` - Quit without saving changes made to the file.
+- `:wq!` - Write and quit. After modifying a file this command ensures it gets saved and closes vi.
+- `:x `- Same as :wq.
+  `:n` - Positions the cursor at line n. For example, :5 will place the cursor on the fifth line in the file.
+- `:$` - Positions the cursor on the last line of the file.
+- `:set nu` - Turn on line numbering.
+- `:set nonu` - Turn off line numbering.
+- `:help [subcommand]` - Get help. If you want more information on the `:w` command type `:help :w`.
+
+#### Advanced editing
+
+You can repeat commands in **Vim** by preceding them with a number. For instance, if you would
+like to move the cursor up 5 lines type `5k`. If you would like to insert a piece of text 80 times, type `80i` and start entering the text. Once you hit Esc to return to `command mode` the text you typed will be repeated 80 times. If you would like to make a line of asterisks, you could type `80i*Esc`.
+Can you see how Vim is more powerful than an editor like nano?
+
+Here are some useful commands :
+
+- Deleting Text :
+
+- `x` - Delete a character.
+- `dw` - Delete a word. To delete five words, type d5w. The repeating concept in vi shows up in
+  many places.
+- `dd` - Delete a line. To delete 3 lines, type 3dd.
+- `D` - Delete from the current position to the end of the line.
+
+- Changing Text :
+
+- `r` - Replace the current character.
+- `cw` - Change the current word.
+- `cc` - Change the current line.
+- `c$` - Change the text from the current position to the end of the line.
+- `C` - Same as c$.
+- `~` - Reverses the case of a character.
+
+- Copying and Pasting
+
+- `yy` - Yank (copy) the current line.
+- `y` `<position>` - Yank the `<position>`. For example, to yank a word type `yw`. To yank three words type y3w.
+- `p` - Paste the most recent deleted or yanked text.
+
+- Undo / Redo
+
+- u - Undo.
+- Ctrl-r - Redo.
+
+- Searching
+
+- `/<pattern>` - Start a forward search for `<pattern>`.
+
+- `?<pattern>` - Start a reverse search for `<pattern>`.
+
+Check out these links to learn more about `Vim`:
+
+- [Vim, all the right moves](https://vim.fandom.com/wiki/All_the_right_moves)
+- [Vi and Vim - A One Page Cheat Sheet](https://linuxmoz.com/vi-commands-cheat-sheet/)
+- [Vim interactive tutorial](https://www.openvim.com/)
+
+Check out this fairly [comprehensive article about the command line](https://www.freecodecamp.org/news/command-line-for-beginners/).
 
 ## Servers
 
-> To complete this part, you will need: Node.js installed on your computer. <br /> We are using version 19.0.0. Check out this [link](https://nodejs.org/en/download) to install Node.js.
-
 The next step after this brief overview of the command line will be discussing servers.
-We are going to take a look at cloud computing, VPS, operating systems, SSH etc..
+We are going to take a look at VPS, operating systems, SSH etc..
 
-{/* ### What is a server? */}
+### What is a server?
 
-{/* A server is essentially a computer that listens and responds to requests coming over the network. However, we usually think of servers as **dedicated hardware** for a variety of reasons. The main reasons are : */}
+> **HTTP** : Communication protocol between web server and web clients <br/> **Business logic**: Rules for data storage and transfer of application resources
+> **Application**: A software program or website attached to a database
 
-{/* - **availability**: a server has to be available 100% of the time otherwise the webpage goes down, your users lose access to their service */}
+A server is essentially a powerful computer (designed to handle heavy workload) that delivers information and software to other computers.
+There are many different types of servers including :
 
-{/* - **efficiency** : a server has to fast and reliable. A slow server can (...) */}
+- `Web servers` - A web server’s main role is to serve web pages for a website. When you visit [netflix.com](https://netflix.com), you begin with entering a URL that starts a request over the internet. This request passes through multiple layers, one or more of which will be a web server. This web server acts as an intermediary between the `backend` and the `frontend`, generates a response to your request which is a combination of many resources (HTML, CSS, JS files, JSON data, etc..) that put together form the website that you can see and play around with. <br/> The most popular open source web servers are currently [Apache](https://apache.org/) and [Nginx](https://nginx.org/en/).
 
-{/* Servers generally run on a different chipset than the one we use on our computers for different reasons like virtualization (more on that later when we get to cloud computing)or efficiency (more efficient than the home computer, this is why a server chip is very expensive.) */}
+- `Application servers` (Also known as the `backend`) - they usually sits in front of the database as you can see in the diagram below.
+
+<Image src={appserver} alt="" />
+
+They are quite similar to web servers as they use HTTP protocol and answer client requests. However, these servers focus on dynamic requests (business logic requests). For example, after you log in to a website, often times your username will dynamically populate in the top navigation bar. This is usually a script, designed to retrieve this information from the database and executed by an application server.
+Dynamic content like this adds extra complexity because it forces the web server to handle many requests at the same time. Popular Examples include Java Application Servers (e.g., Tomcat), .NET Application Servers, and **Node.js** servers.
+
+- `Database servers` - host database software and offer database services to client computers (storing, modifying, and retrieving data by executing a query); A query is a command you send to a database to get it to do something, whether that's to get information out of the database or to add/update/delete something in the database. Some examples of database servers include Microsoft SQL, MySQL, MongoDB, and SQLite.
+
+- `Cloud server` (also called V.P.S, virtual private server) - To do anything online, like start a website like `coursera.com` or run a service such as a food app, you need to run a program or host files on a server. In other words, no server, no website. However, physical servers are large, powerful machines that are expensive to buy and maintain. This is where [virtualization](https://www.ibm.com/topics/virtualization) comes in: rather than having to buy or rent an entire server for each site or online service, individuals or small companies can rent just a fraction of a server from a web hosting company (like [digitalocean.com](https://www.digitalocean.com)). <br/>
+
+The great thing about a VPS is that you get to decide, the operating system the machine will run on (generally linux) and how powerful the machine can be in terms of computing power (memory, disk space, CPU cores, etc..) As a result, they're a very flexible for small companies or any individual interested in a scalable solution.
+
+> In a later section of this article, we will buy our own VPS to host a web application.
+
+However, committing to running an entire cloud server, especially in a production deployment, requires a certain amount of knowledge of Linux best practices, usually formalized in dedicated System Administration (“sysadmin”) or Development Operations (“DevOps”) roles for dealing with security, deployment, and so on. Being able to perform these roles on an occasional or an as-needed basis is very useful, but can be complex. This is especially true when considering that it is not strictly necessary to know how to interact with a Linux server or a command line at all to develop most softwares.
+
+This list is not exhaustive, I [recommend this article to get more information about servers](https://www.zenarmor.com/docs/network-basics/types-of-servers)
+
+I also recommend this [very interesting article](https://www.freecodecamp.org/news/web-servers-explained-by-running-a-microbrewery-d40b9824f882/) that explains web servers using a microbrewery analogy.
 
 ### Creating a simple `node.js` server
 
-> Check out this link to learn more about [node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
+> Prerequisites: To complete this part, you will need Node.js installed on your computer. We are using version 19.0.0. Check out this [link](https://nodejs.org/en/download) to install Node.js and also this [link](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs) to learn more about node.js.
 
 Let's try and create a very simple `node.js` server.
 
@@ -283,14 +366,14 @@ server.listen(PORT)
 console.log(`server is listening to port ${PORT}`.)
 ```
 
-- First, we imported the `HTTP` module. The `HTTP` module is a built-in node module that allows us to transfer data over the Hyper Text Transfer Protocol (HTTP).
+- On the first line, we imported the `HTTP` module. The `HTTP` module is a built-in node module that allows us to transfer data over the Hyper Text Transfer Protocol (HTTP).
 
 - `fs` is also built-in node module that allows us to work with the file system on the computer.
   Common uses of the file System module includes: Read, create, update, delete, rename files. We need the `fs` module because we are going to serve files.
 
-- We defined our server port : 8000 and save it in variable called `PORT`
+- On the third line, we defined our server port : 8000 and save it in variable called `PORT`
 
-- The `http.createServer()` method takes a function, that accepts two arguments `req` and `res` or request and response. The response is an object with a lot of properties (more on that later). We are using the `writeHead()` method to write a header. Headers are metadata attached to the server response. Headers can help us determine if a user is logged in or not, verify the cookies, or check the HTTP status. `200` is the `OK` HTTP status code and just to be as explicit as possible, we added a second argument which is an object that helps the client determines the response data type, which is an` html` file.
+- The `http.createServer()` method takes a function, that accepts two arguments `req` and `res` or request and response. The response is an object with a lot of properties (more on that later), one of which is the`writeHead()` method useful to write headers. Headers are metadata attached to the server response. Headers can help us determine if a user is logged in or not, verify the cookies, or check the HTTP status. `200` is the `OK` HTTP status code and just to be as explicit as possible, we added a second argument which is an object that helps the client determines the response data type, which is an` html` file.
 
 - We also created a read stream. Streams allow us to read from or write to a source continuously, thus eliminating the need to fit all the data in memory at once. With stream we can start processing data almost immediately instead of waiting for the entire payload making it a suitable tool for large data transfer.
 
@@ -318,31 +401,30 @@ if we open `localhost:8000` in the browser, we should see our html page :
 
 <Image src={helloworld} alt="" />
 
-### Server management
+### Hosting our application
 
-We have a node server up and running and it's serving an HTML page but how can we scale it? How can we make it accessible and available for users all around the world? Also, what happens if the server goes down, how do we make sure that we don't rely on only one server in case of failure? These questions need to be addressed in our server management strategy.
+We have a node server up and running and it's serving an HTML page but how can we scale it? How can we make it accessible and available for users all around the world? Also, what happens if the server goes down, how do we make sure that we don't rely on only one server in case of failure?
 
-All digital data and systems have to exist and be hosted somewhere in the real world.
-A company website you visit online, or an app on your phone can all be traced back to where they are hosted: a real machine.
-Not so long ago, most companies used to run their website on their own machine: a physical server. A physical server is any machine with, CPU, GPU, RAM, storage, power supply unit, network interface,etc..., typically designed to run 24/7 and used to run applications that serve other computers, such as web servers.
+As explained above, all digital data and systems have to exist and be hosted somewhere in the real world.
+A company website you visit online, or an app on your phone can all be traced back to where they are hosted: a real machine.<br/>
+Not so long ago, most companies used to run their website on their own machine: a physical server. Physical servers are any machine with, CPU, GPU, RAM, storage, power supply unit, network interface,etc..., typically designed to run 24/7 and used to run applications that serve other computers, such as web servers.
 
-Today, the scale has shifted, modern companies use virtual servers. A virtual server is a digital replica of a physical server.
-Companies like [AWS](https://aws.amazon.com/console/), [Digital Ocean](https://www.digitalocean.com/), [Rackspace](https://www.rackspace.com/) etc.. offer a myriad of services that allow users to host their applications in the cloud, providing the performance and scalability that these applications need. Virtualization is the secret behind big tech companies success and the reason why they can offer efficient resources at global scale while maximizing their hardware.
+Today, modern companies use virtual servers. Companies like [AWS](https://aws.amazon.com/console/), [Digital Ocean](https://www.digitalocean.com/), [Rackspace](https://www.rackspace.com/) etc.. offer many services that allow users to host their applications in the cloud, providing the performance and scalability that these applications need. Virtualization is the secret behind big tech companies success and the reason why they can offer efficient resources at global scale while maximizing their hardware.
 
 ### Buying and setting up a VPS (virtual private server)
 
-So far, we've created a node server and ran it locally. <br/> Let's
-purchase a virtual private server to host our node server in the cloud.
+Currently, our node server is running locally. <br/> Let's
+purchase a virtual private server to host our node server on a virtual machine.
 
-In the browser, let's navigate to <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a>. <br/> Once your account is created, you should land on a dashboard like this :
+In the browser, navigate to <a target="_blank" href="http://www.digitalocean.com">digitalocean.com</a>. <br/> Once your account is created, you should land on a dashboard like this :
 
 <Image src={dashboard} alt="" />
 
-Let's create a new project :
+Click on the `create` button to create a new project :
 
 <Image src={newproject} alt="" />
 
-Digital ocean servers are called droplets. Click on the `create` button to create a new droplet:
+Digital ocean servers are called droplets. Click on `droplets` to create a new droplet:
 
 <Image src={droplet} alt="" />
 
@@ -358,19 +440,16 @@ Next we choose the data center :
 
 Next, the operating system :
 
+The operating system, also known as an "OS," interfaces with the computer's hardware and provides services that applications can use.
+It sits in between the applications you run and the hardware :
+
+<Image src={osedu} alt="" />
+
+For our example, we are going to choose **Ubuntu** , the LTS (LTS stands for long term support) version in 64 bit.
+
 <Image src={chooseOs} alt="" />
 
-For the operating system, we are going to choose **Ubuntu** , the LTS (LTS stands for long term support) version in 64 bit.
-
-An Operating system (at least in Unix terms) is made up of three components:
-
-- `The program or utilities` : `mkir`, `ls`, `rmdir` etc.. these are programs and utilities built in the operating system. With unix everything is either a file that you interact with or a process running. It's a very simple mental model.
-
-- `The Kernel`: main part of the operating system that communicates directly with the hardware.
-
-- `The hardware`.
-
-There are two types of operating systems :
+As you probably know, there are two types of operating systems :
 
 - Windows-based systems
 - Unix-based systems
@@ -381,9 +460,11 @@ Unlike windows-based systems, Unix-based systems comes with multiple flavors. Th
 - Linux
 - BSD
 
-Linux is arguably the most popular. It's user-friendly, more accessible with a lot of built-in commands and highly customizable. Operating systems based on Linux are known as Linux distributions or distros. Examples include Debian, Ubuntu, Fedora, CentOS, Gentoo, Arch Linux, etc...
+Linux is arguably the most popular. It's user-friendly, more accessible with a lot of built-in commands and highly customizable. Operating systems based on Linux are known as Linux distributions or Linux distros. Examples include Debian, Ubuntu, Fedora, CentOS, Gentoo, Arch Linux, etc...
 
 <Image src={linuxdistros} alt="" />
+
+I recommend this very useful [introduction](https://itsfoss.com/what-is-linux-distribution/) to Linux distributions.
 
 For the the size of the cpu and the cpu options (computer power), we will choose basic and regular at $4/mo.
 
@@ -391,12 +472,12 @@ For the the size of the cpu and the cpu options (computer power), we will choose
 
 ### The authentication method.
 
-<Image src={chooseauth} alt="" />
-
-How do we get into the server? There are two options available on digital ocean :
+The next step is deciding how to get into the server? There are two options available on digital ocean :
 
 - Password
 - SSH keys.
+
+<Image src={chooseauth} alt="" />
 
 SSH is one of the most secure option when it comes to server authentication.  
 A username and a password can be stolen and lost very easily, they can also be forgotten etc...
@@ -408,17 +489,17 @@ SSH (Secure Socket Shell) is a network protocol that provides a secure way for t
 
 There are two parts to an SSH key :
 
-- `the public key` that can be shared with others. It's analogous to locks that the corresponding private key can open.
-- `the private key` which must be confidential. The private key is analogous to physical keys that can open one or more locks.
+- `Public key` : can be shared with others. It's analogous to locks that the corresponding private key can open.
 
-The server uses the public key as the authentication method.
-The client compares the server’s public key to the stored private key stored in its system.
-If the keys match, the client and the server agree to use encryption to communicate during the SSH session.
-This means that for the duration of your SSH session, any commands that you type into your local terminal are sent through an encrypted SSH tunnel and executed on your server. SSH employs encryption to ensure that hackers cannot interpret the traffic between two connected devices.
+- `Private key`: must be confidential. The private key is analogous to physical keys that can open one or more locks.
+
+1. First step, the server uses the public key as the authentication method.
+
+2. The client (your computer) compares the server’s public key to the stored private key stored in its system. If the keys match, the client and the server agree to use encryption to communicate during the SSH session. This means that for the duration of your SSH session, any commands that you type into your local terminal are sent through an encrypted SSH tunnel and executed on your server. SSH employs encryption to ensure that hackers cannot interpret the traffic between two connected devices.
 
 #### How to use ssh keys to connect to the server?
 
-First, run this command to create an ssh key :
+First, run this command on your computer to create an ssh key :
 
 ```bash
 $ cd ~/.ssh
@@ -427,7 +508,7 @@ Generating public/private rsa key pair.
 The key fingerprint is: SHA256:S8lk7SSEVK5s2v8EDbJpFR5ezLVixOt9hWz4xATZlmg
 ```
 
-Once the key has been generated, we can open the the public key by running this command:
+Once the key has been generated, we can open the the public key like this (I renamed mine `dgocean_rsa_v2` ) :
 
 ```bash
 $ cat dgocean_rsa_v2.pub
@@ -444,7 +525,7 @@ Choose a hostname and click on "create droplet" :
 
 <Image src={chooseHost} alt="" />
 
-And that's it, we created a server to host our application in the cloud.
+And that's it, we created a server to host our application.
 
 Once the server is online, we will be assigned an IP address that we will use to log in to the server.
 
@@ -470,7 +551,7 @@ $ ssh -i ~/.ssh/<your_private_key> root@<your_IP_address>
 $ exit
 ```
 
-If you did everything correctly and log in to the server, you should see something like this:
+If you did everything correctly, you can log in to the server using the command above. Once you have logged in, you should see something like this:
 
 <Image src={serverin} alt="server in" />
 
@@ -478,7 +559,7 @@ Congrats, we are in!.
 
 ## The Internet
 
-We have a server and we logged into it with our ssh key, the next step is to buy a domain and connect it to the server. But before we jump into it, let's go over some important internet concepts.
+We have a server and we logged into it with our ssh key, in this section we are going to buy a domain and connect it to the server. But before we jump into it, let's go over some important internet concepts.
 
 ### Terminology
 
@@ -493,7 +574,7 @@ We have a server and we logged into it with our ssh key, the next step is to buy
 - `ICMP` : Internet control message protocol
 - `Packet` : Unit of data transmitted over a network
 
-### How does the internet works?
+### How does the internet work?
 
 The core of the internet is built on cooperation and rules. Take a look at this diagram :
 
@@ -510,7 +591,7 @@ This is very simplified version version of how an internet request works :
 7. The server cluster will likely have a load balancer to distribute the request load among the servers
 8. The load balancer is ultimately connected to your own server.
 
-### Network Tool
+### Network Commands
 
 - `Chech the status of a network host` : is the host up or down?
 
@@ -572,7 +653,7 @@ We can break an URL down into three parts :
 - A path : anything after the domain is called the path
 - Query parameters : anything after the path followed by a question mark
 
-#### Buying a domain name
+#### Buying a domain
 
 1. Go on <a href="http://www.hostinger.com">hostinger.com</a>, create an account and search for a domain. We are going to purchase "hkgetsit.tech" :
 
@@ -635,14 +716,14 @@ We have a couple of things to do to get our server up and running.
 
 We need to :
 
-- Update the server
-- Restart the server
-- Create a new user
-- Make that user a **superuser**
-- Enable login for the new user
-- Disable root login
+1. Update the server
+2. Restart the server
+3. Create a new user
+4. Make that user a **superuser**
+5. Enable login for the new user
+6. Disable root login
 
-#### Update and restart the server
+### Update and restart the server
 
 1. Run this command to SSH into the server :
 
@@ -667,7 +748,7 @@ shutdown now -r
 
 Once it's done, SSH back into your server.
 
-#### Create a new user
+### Create a new user
 
 There are two types of users :
 
@@ -700,7 +781,7 @@ su <your_username>
 sudo cat /var/log/auth.log
 ```
 
-#### Disable root access
+### Disable root access
 
 These are the steps to follow to disable root access:
 
@@ -730,17 +811,19 @@ if you have successfully logged in, you should see a prompt that looks like this
 
 <Image src={prompt} alt="server in" />
 
-#### File permissions
+### File permissions
 
-The next thing we need to do is to change the file permission. These are the steps to follow :
+The next thing we need to do is to change the file permission.
+
+> Check out this <a href="https://linuxhandbook.com/linux-file-permissions/">article</a> for more information about file permissions
+
+These are the steps to follow :
 
 1. Change file permissions
 
 ```bash
 chmod 644 ~/.ssh/authorized_keys
 ```
-
-> Check out this <a href="https://linuxhandbook.com/linux-file-permissions/">article</a> or more information about file permissions
 
 2. Disable root login by running the following command and
 
@@ -754,4 +837,6 @@ sudo vi /etc/ssh/sshd_config
 sudo service sshd restart
 ```
 
-Our server is now up and running and connected to our domain. <br/> In the second part, we will setup our server to respond to HTTP requests.
+We've setup our server and connected it to our domain. <br/> In the second part, we will setup our server to respond to HTTP requests and discuss other full stack topics, such as database, security, containers etc..
+
+Check Part II [here](https://linuxhandbook.com/linux-file-permissions)

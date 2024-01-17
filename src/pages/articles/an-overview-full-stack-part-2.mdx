@@ -3,6 +3,7 @@ import Image from 'next/image'
 import requestserver from './assets/requestserver.png'
 import webserver from './assets/webserver.png'
 import nginx from './assets/nginx.png'
+import ngnode from './assets/Nginx-Reverse-Proxy-with-Node.png'
 import nginxconfig from './assets/nginx-config.png'
 import codetools from './assets/codetools.webp'
 import basedirreq from './assets/base-dir-req.png'
@@ -26,21 +27,12 @@ import cron from './assets/cron.png'
 import cronguru from './assets/crontabguru.png'
 import cronguru2 from './assets/crontabguru2.png'
 import syslog from './assets/syslog.png'
-import redirectnginx from './assets/redirect.png'
+
 import createrserv from './assets/server.conf.png'
 import editconf from './assets/editconf.png'
 import subdomain from './assets/subdomain.png'
-import websockconf from './assets/websockconf.png'
-import vscodestartserver from './assets/vscodestartserver.png'
-import websocketbrowser from './assets/websocketbrowser.png'
-import wbsockconnect from './assets/websocketsbrowserconnect.png'
-import wbsockconnect2 from './assets/wbsocketconnect2.png'
-import newfileserver from './assets/newfileserver.png'
-import reldb1 from './assets/reladb1.png'
-import reldb2 from './assets/reldb2.png'
-import reldb3 from './assets/reldb3.png'
-import visitors from './assets/websocketsbrwoser.png'
-import logclients from './assets/logclients.png'
+import certbot1 from './assets/certbot1.png'
+
 import successcertbot from './assets/successcertbot.png'
 import certbotnginx from './assets/certbotnginx.png'
 import https from './assets/https.png'
@@ -59,7 +51,7 @@ import Illustration from './assets/illustration.png'
 export const meta = {
   author: 'Hermann Kanga',
   date: '2023-09-05',
-  title: 'An overview of Full stack developement - Part II',
+  title: 'An overview of Full stack development - (Part II)',
   description:
     'In this second part, we will get hands-on with building and deploying a web application from scratch.',
 }
@@ -78,49 +70,56 @@ Part 2:
 - Loggins and redirection
 - Subdomains
 - Databases
+- HTTPS and
 - Containers
+- Load balancer
 
 ## Application setup
 
-If we navigate to our server's domain in the browser right now, this is what we see :
+If we navigate to our domain (mine is hkgetsit.tech), this is what we see :
 
 <Image src={requestserver} alt="server in" />
 
-This is because the server doesn't know how to respond to a request. Let's make our server respond to HTPP requests.
+This is because the server doesn't know how to respond to a request. <br/> Let's make our server responds to HTTP requests.
 
-To do this we need a web server. There are many options out there (check out this <a target="_blank" href="http://www.digitalocean.com">link</a> for more information) but we will choose <a target="_blank" href="https://nginx.org/en/">NGINX</a>.
+To do this we need a **web server**. There are <a target="_blank" href="https://www.linode.com/docs/guides/web-servers-list/">many options</a> out there but we are going to use <a target="_blank" href="https://nginx.org/en/">Nginx</a>.
 
 ### Why do we need a web server?
 
-When an HTTP request comes in, we need a web server to route that request to the right place (database, application or another server)
+We discussed web servers in part one of this article, it's time to see it in practice.
+
+When an HTTP request comes in, we need a web server to route that request to the right place (database, application or another server).
 
 <Image src={webserver} alt="server in" />
 
-We technically don't need a web server to route our requests, but it's not a good practice.
+Using a web server offers several advantages, including:
 
-Let's install and set up NGINX:
+- `Scalability` : Web servers can handle a large number of simultaneous connections, making them suitable for high-traffic websites.
+- `Security` : Web servers include security features to protect against common web threats like DDoS attacks and SQL injection.
+- `Customization` : Web servers configurations can be customize to specific application requirements.
 
-1. SSH into your server and run this command to install NGINX :
+To learn more about web servers, check out this very interesting <a target="_blank" href="https://www.digitalocean.com/community/conceptual-articles/introduction-to-web-servers">article</a> .
+
+Let's install and set up Nginx:
+
+1. SSH into your server (make sure to replace `<your_IP_address>`) and install Nginx :
 
 ```bash
+ssh root@<your_IP_address>
 sudo apt install nginx
 ```
 
-2. Start Nginx
+2. Start Nginx :
 
 ```bash
 sudo service nginx start
 ```
 
-3. Navigate to your server in the browser
-
-After running these commands, if you try to navigate to your server's domain in the browser again you will see this page :
+3. Navigate to your domain in the browser :
 
 <Image src={nginx} alt="server in" />
 
-We've now officially hooked up the domain to the server. This is a good starting place.
-
-Let's check the NGINX default server configuration by running the following command :
+Let's check the Nginx default server configuration by running the following command :
 
 ```bash
 less /etc/sites-available/default
@@ -130,41 +129,44 @@ You should see :
 
 <Image src={nginxconfig} alt="server in" />
 
-- root /var/www/html : This is the base directory for requests, the welcome page above is located in this directory.
+- `root /var/www/html` : This is the base directory for requests, the welcome page above is located in this directory.
 
 <Image src={basedirreq} alt="server in" />
 
-- location : Location blocks are used to decide how to process the request URI (the part of the request that comes after the domain name or IP address/port)
+- `location` : Location blocks are used to decide how to process the request URI (the part of the request that comes after the domain name or IP address/port)
 
 <Image src={locationblock} alt="server in" />
 
-- directives : In this example, the directive is to try to serve an HTML page and if not there serve the 404 page. We will use another directive called `proxy_pass` to route our request into node from NGINX.
+- `directives` : In this example, the directive is to try to serve an HTML page and if not there serve the 404 page. We will use another directive called `proxy_pass` to route our request into node from Nginx.
 
 Let's edit the default homepage :
 
 ```bash
 cd /var/www/html
 vi index.html
-# add hello world and save and exit
+# add hello world save and exit
 ```
 
-if you go back to the browser and refresh the page you should see :
+If you go back to the browser and refresh the page you should see :
 
 <Image src={hellownginorld} alt="server in" />
 
 {/* NGINX is great, but let's move into a domain, we are much more familiar with. We are going to use nodejs to host our application. The request will come to the server, Nginx will proxy it to the nodejs. */}
 
-### Setup NGINX as a reverse proxy
+### Setup Nginx as a reverse proxy
 
-A reverse proxy is the recommended method to expose an application server to the internet.
-First, let's install Node.js on our server to create a basic Node.js application :
+Web applications written in Node.js for example, can run with their own standalone server but they lack a number of advanced features like **load balancing**, **security**, etc.. Nginx can act as a reverse proxy while serving HTTP requests.
+
+A reverse proxy is a server that retrieves resources for clients from one or more upstream servers.
 
 <Image src={ngninxrequestnode} alt="server in" />
 
-These are the steps to follow :
+A reverse proxy is the recommended way to expose an application server to the internet. Check out this very interesting <a target="_blank" href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/">article</a> to find more details.
 
-Here is the link to <a href="https://github.com/nodesource/distributions/blob/master/README.md#debinstall">
-install node </a> on linux.
+- First, let's install Node.js on our server :
+
+> Here is the link to <a href="https://github.com/nodesource/distributions/blob/master/README.md#debinstall">
+> install node </a> on linux.
 
 1. Download and import the Nodesource GPG key :
 
@@ -189,15 +191,15 @@ sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
-4. Install git (If git not already installed) :
+4. Install git (more on that later) :
 
 ```bash
 sudo apt install git
 ```
 
-Next, let's create our application :
+- Next, let's create a basic Node.js application :
 
-1. Change ownership of /www
+1. Change ownership of `/www`
 
 ```bash
 sudo chown -R $USER:$USER /var/www
@@ -216,14 +218,14 @@ cd app
 git init
 ```
 
-4. Create application files
+4. Initialize node modules :
 
 ```bash
 npm init -y
-touch app.js
+
 ```
 
-5. Create a basic nodejs server in app.js
+5. Create a file called `app.js`
 
 ```bash
 vi app.js
@@ -235,28 +237,26 @@ Copy-paste this :
 const http = require('http')
 const PORT = 8000
 
-const server = http.createServer((req, res) =>
+const server = http.createServer((req, res) =>{
 res.write("Hello from basic nodejs server")
 res.end()
 })
 
 server.listen(PORT)
-console.log(`server is listening to port ${PORT}))
+console.log(`server is listening to port ${PORT})
 ```
 
-{/* check for example our to write article explaining instructions : */}
+- Next, let's setup proxy pass
 
-{/* https://www.digitalocean.com/community/tutorials/how-to-configure-nginx-as-a-reverse-proxy-on-ubuntu-22-04 */}
+Proxy pass is an Nginx directive that allows us to route any request that comes to our web server to our node.js server.
 
-6. Setup proxy pass
-
-Proxy pass is an NGINX directive that allows us to route any requests that comes to our server to our node.js server.
+1. Create a configuration file (in my case `hk`) for your server
 
 ```bash
 sudo vi /etc/nginx/sites-enabled/hk
 ```
 
-Copy-paste the following configuration to create a virtual server block :
+2. Copy-paste the following configuration to create a virtual server block, making sure to replace `<your_domain>` and the app server address (http://127.0.0.1:8000)
 
 ```vim
 server {
@@ -271,34 +271,43 @@ server {
 }
 ```
 
-- We listening on port 80
-- Serving an index.html in `/var/www/html` directory
-- Renamed our server
-- Told nginx to reroute the request to localhost:port8000 where our node js server is running
+3. Save and exit!
 
-Now we're going to point NGINX to our new server:
+This configuration file begins with a standard Nginx setup, where Nginx will listen on port 80 and respond to requests made to `<your_domain>`.
+
+The Reverse proxy functionality is enabled through Nginx’s `proxy_pass` directive. With this configuration, navigating to `<your_domain>` in your local web browser will be the same as opening `http://localhost:8000`.
+
+While we will only proxy a single application server, Nginx is capable of serving as a proxy for multiple servers at once :
+
+<Image src={ngnode} alt="server in" />
+
+By adding more location blocks as needed, a single server name can combine multiple application servers through proxy into one cohesive web application.
+
+- Finally, we're going to point Nginx to our new server.
+
+1. Open the file `nginx.conf` :
 
 ```bash
 sudo vi /etc/nginx/ngnix.conf
 ```
 
-Modify this line `/etc/nginx/sites-enabled/ ` to include :
+2. Modify this line `/etc/nginx/sites-enabled/ ` making sure to replace `<server_config_file>` (`hk` in my case) :
 
 ```vim
-/etc/nginx/sites-enabled/<server_name>
+/etc/nginx/sites-enabled/<server_config_file>
 ```
 
-To validate your configuration file you can run the following command :
+4. To validate your configuration file you can run the following command :
 
 ```bash
 nginx -t
 ```
 
-if everything is correct you should get the following output:
+If everything is correct you should get the following output:
 
 <Image src={nginxt} alt="server in" />
 
-let's check nginx status and restart
+5. Let's check Nginx status and restart Nginx :
 
 ```bash
 sudo service nginx status
@@ -316,19 +325,13 @@ Refresh the page in the browser you should see the following:
 
 <Image src={noderunning} alt="server in" />
 
-Congratulations, we have :
+Congratulations, Nginx is now configured as a reverse proxy for your application server.
+With this in place, we can build a full web page, accessible via our domain (mine is **hkgetsit.tech**).
 
-- bought a server on digital ocean
-- bought a domain
-- connected the domain to our digital ocean server
-- created a node.js app
-- setup NGINX to reroute requests coming to the server to your node.js app
-
-With this in place, we can build a full web page, accessible via our domain (mine is **hkgetsit.tech**)
-
-To make sure our webpage stays up and running even when we close the shell or exit the terminal, we're going to install a program called **PM2**.
+To make sure our website stays up and running even when we close the shell or exit the terminal, we're going to install a program called **PM2**.
 PM2 is a powerful process manager for Node.js.
-The start script sets up PM2 as a service under the [init](https://linuxtldr.com/init-linux/) system. When the server restarts, it will automatically restart PM2, which will then restart all the Node.js applications/processes it is managing.
+
+The start script sets up PM2 as a service under the <a target="_blank" href="https://linuxtldr.com/init-linux/">init</a> system. When the server restarts, it will automatically restart PM2, which will then restart all the Node.js applications/processes it is managing.
 
 1. Install pm2
 
@@ -336,7 +339,7 @@ The start script sets up PM2 as a service under the [init](https://linuxtldr.com
 sudo npm i -g pm2
 ```
 
-2. start pm2
+2. Start pm2
 
 ```bash
 pm2 start app.js
@@ -346,20 +349,18 @@ you should get this output:
 
 <Image src={pm2} alt="server in" />
 
-3. setup autostart
+3. Setup autostart
 
 ```bash
 pm2 startup
 pm2 save
 ```
 
-copy paste the output command and execute it
-
-you should see the following output:
+Copy paste the output command and execute it. You should see the following output:
 
 <Image src={pm2su} alt="server in" />
 
-To check if all your Node.js processes are running under PM2, we can run the following command:
+4. To check if all your Node.js processes are running under PM2, we can run the following command:
 
 ```bash
 pm2 ls
@@ -369,11 +370,11 @@ pm2 status
 
 <Image src={pm2status} alt="server in" />
 
-Now our if server reboot, **pm2** is going to bring up our node app automatically.
+With this in place, if our server reboot, **pm2** is going to bring up our node app automatically.
 
 ### Creating a git repo
 
-Right now, our node app is only accesible on the server, let's create a git repository to be able to access our node js app on our local machine.
+Right now, our node app is only accesible on the server. Let's create a git repository to be able to access our node js app on our local machine (in VS code).
 
 1. On <a href="https://github.com/">github</a> create a git repository
 
@@ -416,15 +417,15 @@ We've pushed our code to github, if everything is working correctly, you should 
 
 **How can we secure our application?** :
 
-Security is paramount when it comes to servers. These are some of the measures that we can take to protect your server. For example :
+Security is paramount when it comes to servers. These are some of the measures that we can take to protect our server. For example :
 
-- Using SSH : we don't use password
-- Setup firewalls : a firewall restrict access to activities
+- Using SSH : We don't use password
+- Setup firewalls : A firewall restrict access to activities
 - Updates : Keep the software up to date because if there's a hack or a breach you want to ensure your software is always running the latest version
 - Two factor authentication
 - VPN
 
-In the next section, we will focus on setting up firewalls. But Before getting into firewalls, we need to understand what a port is. By defintion, a port is a communication endpoint that maps to specific process or network service. Ports are amazing because they allow us to run multiple services on one IP address.
+In the next section, we will focus on firewalls. But before getting into it, we need to understand what a port is. By defintion, a port is a communication endpoint that maps to specific process or network service. Ports are amazing because they allow us to run multiple services on one IP address. However, they are also an entry point for hackers because they are an opening to your computer.
 
 To take a look at the well known ports, run this command :
 
@@ -432,9 +433,7 @@ To take a look at the well known ports, run this command :
 less /etc/services
 ```
 
-Ports are an opening in your computer and because of that, they represent a entry point for hackers.
-
-Let's run these commands to take a look at our open ports on our machine. We are going to use a program called `nmap`. :
+Let's run these commands to take a look at the open ports on our machine. We can use a program called `nmap`. :
 
 - Install nmap
 
@@ -478,9 +477,9 @@ The commands are really simple :
 - ufw deny
 - ufw reject
 
-Let's go ahead and use **UFW**. The first thing to do is to allow **UFW** to take over the management of our firewall. We will then allow ssh, http, and finally enable the firewall :
+The first step is to allow **UFW** to take over the management of our firewall. We will then allow ssh, http, and finally enable the firewall :
 
-- Check firewall status
+1. Check firewall status
 
 ```bash
 sudo ufw status
@@ -488,19 +487,19 @@ sudo ufw status
 
 The status will probably be inactive which is fine.
 
-- Allow ssh
+2. Allow ssh
 
 ```bash
 sudo ufw allow ssh
 ```
 
-- Allow http
+3. Allow http
 
 ```bash
 sudo ufw allow http
 ```
 
-- Enable firewall
+4. Enable firewall
 
 ```bash
 sudo ufw enable
@@ -512,9 +511,7 @@ If we run `sudo ufw status` again we should see the open ports :
 
 Our firewall is set up, what else can we do?
 
-If we ever needed to block http connection (for example to only allow https connections), we could run this command :
-
-- Block http
+If we need to block http connection (for example to only allow https connections), we could run this command :
 
 ```bash
 sudo ufw reject http
@@ -522,7 +519,7 @@ sudo ufw reject http
 
 ### Keeping our application up to date
 
-Another solution to keep our application secure is keeping our software and packages up to date. We will use another package called `unattended-upgrades` to allow upgrade to run on the system at a periodic function.
+Another solution to keep our application secure is keeping our software and packages up to date. We will use a package called `unattended-upgrades` to allow upgrade to run on the system periodically.
 
 1. Install unattended-upgrades
 
@@ -547,7 +544,7 @@ For our application, we are going to automate a very simple task :
 
 - Pulling the latest commit from our repository at certain intervals.
 
-In order to do this, we will create a [cron job](https://www.hivelocity.net/kb/what-is-cron-job/) to execute a shell script. This is what a shell script looks like :
+In order to do this, we will create a [cron job](https://www.hivelocity.net/kb/what-is-cron-job/) to execute a shell script. <br/> This is what a shell script looks like :
 
 ```vim
 #! /usr/bin/bash
@@ -562,7 +559,7 @@ We can create a file called github.sh to write our script :
 vi github.sh
 ```
 
-The command to pull from github is `git pull origin <branch_name>`. So, our script would look like this :
+The command to pull from github is `git pull origin <branch_name>`. <br/> So, our script would look like this :
 
 ```bash
 #! /usr/bin/bash
@@ -590,7 +587,7 @@ cd /var/www/app
 #Already up to date.
 ```
 
-We wrote a two-line shell script to pull from github, but we want to execute it at certain interval, that's where cron job comes into play.
+We wrote our shell script to pull from github, but we want to execute it at certain interval, that's where cron job comes into play.
 
 For our cron job, we need :
 
@@ -600,8 +597,8 @@ For our cron job, we need :
 <Image src={cron} alt="cron" />
 
 <a href="https://crontab.guru/">crontab.guru</a> is a website that allows us to generate
-the timer for our cronjob. For example if we want to run a cronjob at minute ten
-on tuesday we can write the following:
+the timer for our cronjob. <br /> For example if we want to run a cronjob at minute
+ten on tuesday we can write the following:
 
 <Image src={cronguru} alt="cron" />
 
@@ -642,7 +639,7 @@ We piped our output into syslog, so to check if it's running we can execute this
 sudo tail -f /var/log/syslog
 ```
 
-we should see something like:
+We should see something like:
 
 <Image src={syslog} alt="cron" />
 
@@ -711,7 +708,7 @@ grep -i 'hello' /var/www
 - `-hello` : search term
 - `/var/www` : directory
 
-for example, this command is useful to find the running processes
+For example, this command is useful to find running processes
 
 ```bash
 ps aux | grep node
@@ -727,21 +724,13 @@ We're going to create a subdomain called **blog.hkgetsit.tech** :
 
 <Image src={createarecord} alt="cron" />
 
-{/* 1. Create a new subdomain called `blog` */}
-
-{/* - create an A record */}
-{/* - create a server */}
-
-{/* 2. Update nginx.conf */}
-{/* 3. Restart nginx */}
-
 2. Create a new nginx configuration file for our subdomain. Navigate to `/etc/nginx/sites-enabled` and execute the following command :
 
 ```bash
 sudo vi blog._your_domain_.
 ```
 
-and edit your file to look like this :
+And edit your file to look like this :
 
 <Image src={createrserv} alt="cron" />
 
@@ -752,11 +741,11 @@ cd /etc/nginx/
 sudo vi nginx.conf
 ```
 
-edit your file by adding a new "include" line for "blog.your_domain"
+Edit your file by adding a new "include" line for "blog.your_domain" (make sure to replace "blog.your_domain")
 
 <Image src={editconf} alt="cron" />
 
-and finally restart our NGINX server :
+4. Finally restart nginx server :
 
 ```bash
 sudo service nginx restart
@@ -772,21 +761,21 @@ As always run `nginx -t` to validate your configuration. If you open the browser
 
 > A database is an organized collection of structured information, or data, typically stored electronically in a computer system. A database is usually controlled by a database management system (DBMS). Together, the data and the DBMS, along with the applications that are associated with them, are referred to as a database system, often shortened to just database. [Source](https://www.oracle.com/database/what-is-database/)
 
-Another way to think about this is that it is a place to save your application's data (state) so that it can be retrieved later. For example, let's say you are building a website where users can see or download cocktail recipes, you would certainly need a database to store and **query** the list of recipes. A query is a command you send to a database to get it to do something, whether that's to get information out of the database or to add/update/delete something in the database.
+Another way to think about this is that it is a place to save your application's data (state) so that it can be retrieved later. For example, let's say you are building a website where users can see or download cocktail recipes. You would certainly need a database to store and **query** the list of recipes. A query is a command you send to a database to get it to do something, whether that's to get information out of the database or to add/update/delete something in the database.
 
 There are two main types of databases :
 
 - **Relational databases (often called RDBMS or SQL databases)** : organizes data into rows and columns, which collectively form a table. Data is structured across multiple tables, which can be joined together via a primary key or a foreign key (establishing relationships between tables) . Examples of relational databases are : SQL, mySQL, SQLITE etc..
 
-- **Non-relational databases (often called NoSQL)** : aim to solve for the flexibility and scalability issues inherent in relational models which are not ideal for unstructured data formats, like text, video, and images. These types of databases include: Key-value store, Document store etc.. Examples of non-relational databases are : MongoDB, Cassandra, Couchbase, ReThinkDB etc..
+- **Non-relational databases (often called NoSQL)** : solve the flexibility and scalability issues inherent in relational models which are not ideal for unstructured data formats, like text, video, and images. These types of databases include: Key-value store, Document store etc.. Examples of non-relational databases are : MongoDB, Cassandra, Couchbase, ReThinkDB etc..
 
-For our application, we're going to create a database using [Sqlite](https://www.sqlite.org/index.html), a lightweight SQL database. The goal is to store a list of countries that we are going to be able to retrieve and display. Check out the <a href="https://github.com/mapbox/node-sqlite3/wiki/API">sqlite3 library API docs</a>
+For our application, we're going to create a database using [Sqlite](https://www.sqlite.org/index.html), a lightweight SQL database. The goal is to store a list of countries that we are going to be able to retrieve and display. Check out the <a href="https://github.com/mapbox/node-sqlite3/wiki/API">sqlite3 library API docs</a> for more information.
 
 Relational databases are made up of three different components:
 
-- Table : in our example, our table will be `COUNTRIES`
-- Fields or columns : we will have two columns `name` and `time`
-- Rows or records: we will have three countries, so this table will have three records
+- Table : in our example, our table will be `COUNTRIES`.
+- Fields or columns : we will have two columns `name` and `time`.
+- Rows or records: we will have three countries, so this table will have three records.
 
 Here are the steps to follow :
 
@@ -796,7 +785,7 @@ Here are the steps to follow :
 git clone <your_repo_link>
 ```
 
-2. Run the following command to installl **sqlite3** and **express**
+2. Run the following command to installl **sqlite3** and **express** (more information about express <a href="https://expressjs.com/">here</a>)
 
 ```bash
 npm i sqlite3
@@ -810,7 +799,7 @@ const sqlite = require('sqlite3')
 const express = require('express')
 ```
 
-- Copy the code below, to create a new express server that sends back an html page when users hit our homepage '/' :
+- Copy the code below, to create a new express server that sends back an html page when users hit our homepage `'/'` :
 
 ```js
 app.use(express.json())
@@ -978,7 +967,7 @@ app.get('/getCountries', function (req, res) {
 </html>
 ```
 
-- Start up the server and open up the browser at http://localhost:8000/, you should see this page with the button "get countries" :
+- Start up the server and open up the browser at http://localhost:8000/ you should see this page with the button "get countries" :
 
 <Image src={htmlcountries} alt="cron" />
 
@@ -1046,17 +1035,17 @@ HTTPS helps us to encrypt the information sent back and forth between the server
 
 Let's implement https.
 
-To do that we're going to use <a href="https://certbot.eff.org/instructions">certbot</a>.
+To do that we're going to use <a target='_blank' href="https://certbot.eff.org/instructions">certbot</a>.
 
-<Image src={logclients} alt="cron" />
+Select nginx and ubuntu 20 and you should see the instructions for setting up nginx :
 
-Select the type of nginx and ubuntu 20 and you should see the instructions for setting up nginx :
+<Image src={certbot1} alt="cron" />
 
 1. SSH into the server
 
 SSH into the server running your HTTP website as a user with sudo privileges.
 
-2. install snapd
+2. Install snapd
 
 ```bash
 sudo snap install core
@@ -1078,7 +1067,7 @@ sudo snap install --classic certbot
 
 5. Prepare the Certbot command
 
-Execute the following instruction on the command line on the machine to ensure that the certbot command can be run.
+Execute the following instruction on the command line to ensure that the certbot command can be run.
 
 ```bash
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
@@ -1093,9 +1082,9 @@ sudo certbot --nginx
 ```
 
 - Put in your email
-- select Yes to read the terms and service
-- select yes or no for the newsletter
-- leave it blank to have certificate for both the domain and the subdomain
+- Select Yes to read the terms and service
+- Select yes or no for the newsletter
+- Leave it blank to have certificate for both the domain and the subdomain
 
 If it's successful you should be able to see this :
 
@@ -1125,37 +1114,39 @@ Now if we open up the browser and visit our website, we should see a lock indica
 
 <Image src={https} alt="cron" />
 
-And that's it! we've implemented `https`
+And that's it! We've implemented `https`
 
 ## HTTP2
 
 HTTP2 does something called multiplexing, which just means we can do multiple things on one connection.
 
-on our website we can see that the protocol used is http1
+On our website we can see that the protocol used is HTTP1
 
 <Image src={protocolhttp1} alt="cron" />
 
-Let's implement http2
+Let's implement HTTP2
+
+1. Open up our server configuration file :
 
 ```bash
 sudo vi /etc/nginx/sites-enabled/hk
 ```
 
-add http2 on the listen block like this:
+2. Add HTTP2 to the listen block like this:
 
 <Image src={http2certbot} alt="cron" />
 
-restart nginx :
+- Restart nginx :
 
 ```bash
 sudo service nginx restart
 ```
 
-now, let's open up the website again :
+Now, let's open up the website again :
 
 <Image src={http2protocol2} alt="cron" />
 
-we can see that the protocol has changed to http2
+We can see that the protocol has changed to HTTP2
 
 ## Containers
 
@@ -1168,7 +1159,7 @@ Containers exist because they solve an important problem: **how to make sure tha
 A well-known solution to this problem is **virtualization**. Virtualization allows multiple operating systems to be run completely independently on a single machine. The main benefit of this approach is that the operating system is encapsulated, which means that there are far fewer compatibility problems.
 
 Containerization is an extension of the virtualization approach.
-Virtualization uses specialized software called a **Hypervisor** that encapsulates a guest version of the operating system and emulates hardware resources like server CPU, memory, hard disk and other resources so that these resources can be shared across multiple virtual machines. The hypervisor creates and runs multiple instances of an operating system so that multiple operating systems can be run on a single physical machine sharing the hardware resources.
+Virtualization uses specialized software called a **Hypervisor** that encapsulates a guest version of the operating system and emulates hardware resources like server CPU, memory, hard disk and other resources so that these resources can be shared across multiple virtual machines. The hypervisor creates and runs multiple instances of an operating system so that multiple operating systems can be run on a single physical machine sharing the hardware resources. <br/>
 Containerization takes things a little further. It achieves far greater efficiency than virtualization by eliminating the hypervisor and its multiple virtual machines.
 Instead of hypervisors, containers are essentially applications, and all their dependencies packaged into virtual containers.
 Containers contain not just the application, but everything that it needs to run including runtime, system libraries, etc. Each application shares a single instance of the operating system and runs on the “bare metal” of the server.
@@ -1181,16 +1172,14 @@ We can see on the diagram above that since the operating system is shared by all
 
 Besides obvious reasons such as : containers are lightweight, easier for development, easier to manage etc.., the biggest selling point is that containers allow us to decouple the application from the infrastructure. This decoupling allows container-based applications to be deployed easily and consistently, regardless of whether the target environment is a private data center, the public cloud, or even a developer’s personal laptop.
 
-Containers are also one of the key technology that enable us to build **microservices**, which is a software architecture design for building distributed applications. Applications were traditionally built as monolithic pieces of software. Monolithic applications are updated infrequently and changes usually affect the entire application. Adding new features requires reconfiguring and updating the entire stack which can be a costly and cumbersome process delaying the application development.
+Containers are also one of the key technology that enable us to build **microservices**, which is a software architecture design for building distributed applications. Applications were traditionally built as monolithic pieces of software. However, monolithic applications are updated infrequently and changes usually affect the entire application. Adding new features requires reconfiguring and updating the entire stack which can be a costly and cumbersome process delaying the application development.
 Microservices architecture was designed to remedy this problem. All services are created individually and deployed separately. This allows for each service to scale or update, without disrupting other services in the application and enables the rapid, frequent and reliable delivery of large, complex applications..
 
 <Image src={monvsmicro} alt="cron" />
 
 **How do we containerize our application?**
 
-[Docker](https://www.docker.com/) is by far the best-known containerization technology.
-Docker containers package an application and its dependencies into a single image file, which can be deployed to any platform that supports Docker.
-Docker has the advantage of a large user community providing excellent support to users.
+[Docker](https://www.docker.com/) is by far the best-known containerization technology. Docker containers package an application and its dependencies into a single is by far the best-known containerization technology. Docker containers package an application and its dependencies into a single [image](https://jfrog.com/devops-tools/article/understanding-and-building-docker-images/) file, which can be deployed to any platform that supports Docker. <br /> Docker has the advantage of a large user community providing excellent support to users.
 
 These are the steps to follow in order to containerize our application with docker :
 
@@ -1250,7 +1239,7 @@ sudo apt install docker.io
 docker build -t node-hkgetsit .
 ```
 
-to see the image we created, we can run the command:
+- To see the image we created, we can run the command:
 
 ```bash
 docker image ls
@@ -1264,7 +1253,7 @@ docker image ls
 pm2 stop app.js
 ```
 
-- run the image
+- Run the image :
 
 ```bash
 docker run -d -p 8000:8000 node-hkgetsit
@@ -1294,17 +1283,13 @@ and that's the power of docker we can run as many instances as we like on one se
 
 ## Load balancer
 
-{/* <Image src={orchestra} alt="cron" /> */}
-
-{/* In a real world, you can have thousands of containers running. We need something to manage those containers, we call it orchestration. */}
-{/* One of the most popular tool, to do it is `Kubernetes`. With kubernetes, we can create hundreds of containers at one time, all running the exaxt instance of our application. */}
-
 Going back to our application, we have two instances running, we can balance between the two of them using a load balancer :
 
 <Image src={loadbalancer} alt="cron" />
 
-if one server is overloaded we would be able to route the request to the one that's runnning lower.
-There's different types of algorithm for deciding how to balance between containers :
+One of the main benefits of using a load balancer is that if one server is overloaded with requests, we would be able to route the request to the one that's runnning lower as illustrated in the diagram above.
+
+There are different types of algorithm for deciding how to balance between containers :
 
 - Round robin algorithm
 - IP hashing
@@ -1312,9 +1297,11 @@ There's different types of algorithm for deciding how to balance between contain
 - Least connection
 - Least loads
 
-Let's implement a load balancer in nginx. We're going to create an Upstream, to list the servers we want to connect to and then in a server block we'll proxy pass the cluster and nginx will take care of the rest.
+Check out this <a href="https://www.cloudflare.com/learning/performance/types-of-load-balancing-algorithms/">article</a> for more information
 
-1. add server cluster to the nginx configuration
+Let's implement a load balancer in nginx. We're going to create an Upstream to list the servers we want to connect to and then in a server block we'll proxy pass the cluster, nginx will take care of the rest.
+
+1. Add server cluster to the nginx configuration
 
 ```bash
 sudo vi /etc/nginx/nginx.conf
@@ -1344,7 +1331,7 @@ location {
 }
 ```
 
-- restart nginx
+- Restart nginx
 
 ```bash
 sudo service nginx restart
@@ -1352,4 +1339,8 @@ sudo service nginx restart
 
 If we did everything correctly, you should be able to visit the website.
 
-We're now have a fully functionning web application
+## Conclusion
+
+In this article, we explained what full-stack engineering means, we created a node.js application and deployed it on a cloud server on digital ocean. We also purchased a domain, hooked it to our cloud server and set up Nginx as a reverse proxy to retrievs resources for clients from our node.js application.<br/>
+Finally, we've gone over the basics of databases, containers, continous integration and delivery, load balancer etc...<br/>
+Equipped with this knowledge, you should be familiar with the entire process of building full stack web applications.
