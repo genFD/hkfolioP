@@ -90,7 +90,12 @@ function Article({ article }) {
 
 function SocialLink({ icon: Icon, ...props }) {
   return (
-    <Link className="group -m-1 p-1" {...props}>
+    <Link
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group -m-1 p-1"
+      {...props}
+    >
       <Icon className="h-6 w-6 fill-zinc-500 transition-all hover:scale-125 group-hover:fill-teal-500 dark:fill-zinc-400" />
     </Link>
   )
@@ -224,16 +229,16 @@ export default function Home({ articles }) {
             Software developer.
           </h1>
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-8892b0 sm:text-5xl">
-            Tech enthusiast and aspiring entrepreneur.
+            Tech enthusiast.
           </h1>
           <p className="mt-6 font-IBM text-lg text-zinc-600 dark:text-zinc-400 ">
-            I’m Hermann, a software developer and aspiring entrepreneur based in
-            Montreal. <br /> I build web applications <span></span>
+            I’m Hermann, a software developer based in Montreal. <br /> I build
+            web applications <span></span>
             <span className="text-base font-bold text-zinc-600 dark:text-teal-500">
-              end-to-end from design through deployment.
-            </span>{' '}
-            I always try and stay up to date with technologies, but my favorite
-            stack is :
+              end-to-end (front and back end).
+            </span>
+            <br />I always try and stay up to date with technologies, but my
+            favorite stack is :
           </p>
           <ul className="skills-list text-sm text-zinc-600 dark:text-zinc-400">
             <li className="transition-colors duration-300 dark:hover:text-teal-500">
@@ -257,7 +262,7 @@ export default function Home({ articles }) {
           </ul>
           <div className="mt-6 flex gap-6">
             <SocialLink
-              href="https://github.com"
+              href="https://github.com/genFD"
               aria-label="Follow on GitHub"
               icon={GitHubIcon}
             />
@@ -289,7 +294,7 @@ export async function getStaticProps() {
   return {
     props: {
       articles: (await getAllArticles())
-        .slice(0, 3)
+        .slice(0, 2) // slice the number of articles for homepage
         .map(({ component, ...meta }) => meta),
     },
   }

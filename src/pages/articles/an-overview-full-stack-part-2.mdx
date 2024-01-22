@@ -9,6 +9,7 @@ import codetools from './assets/codetools.webp'
 import basedirreq from './assets/base-dir-req.png'
 import createarecord from './assets/createnewarecord.png'
 import locationblock from './assets/location-block.png'
+import reverseproxy from './assets/reverseproxy.png'
 import hellownginorld from './assets/hellownginorld.png'
 import monvsmicro from './assets/monolith-vs-microservices.png'
 import ngninxrequestnode from './assets/request-ngnix-node.png'
@@ -92,13 +93,13 @@ When an HTTP request comes in, we need a web server to route that request to the
 
 <Image src={webserver} alt="server in" />
 
-Using a web server offers several advantages, including:
+Though not required, using a web server offers several advantages, including:
 
 - `Scalability` : Web servers can handle a large number of simultaneous connections, making them suitable for high-traffic websites.
 - `Security` : Web servers include security features to protect against common web threats like DDoS attacks and SQL injection.
 - `Customization` : Web servers configurations can be customize to specific application requirements.
 
-To learn more about web servers, check out this very interesting <a target="_blank" href="https://www.digitalocean.com/community/conceptual-articles/introduction-to-web-servers">article</a> .
+To learn more about web servers, check out part <a target="_blank" href="https://www.hkfolio.com/articles/an-overview-full-stack-part-2">part one of this article</a> .
 
 Let's install and set up Nginx:
 
@@ -115,11 +116,13 @@ sudo apt install nginx
 sudo service nginx start
 ```
 
-3. Navigate to your domain in the browser :
+3. If you navigate to your domain in the browser, you should see this :
 
 <Image src={nginx} alt="server in" />
 
-Let's check the Nginx default server configuration by running the following command :
+This is the nginx welcome page!
+
+We can check the Nginx default server configuration by running the following command :
 
 ```bash
 less /etc/sites-available/default
@@ -133,16 +136,21 @@ You should see :
 
 <Image src={basedirreq} alt="server in" />
 
-- `location` : Location blocks are used to decide how to process the request URI (the part of the request that comes after the domain name or IP address/port)
+- `location` : Location blocks are used to decide how to process the request based on the URI (the part of the request that comes after the domain name or IP address/port).
 
 <Image src={locationblock} alt="server in" />
 
-- `directives` : In this example, the directive is to try to serve an HTML page and if not there serve the 404 page. We will use another directive called `proxy_pass` to route our request into node from Nginx.
+- `directives` : In this example, the directive is to try to serve an HTML page and if the page can't be found, serve the 404 page. Later in this article, we will use another directive called `proxy_pass` to route requests to our node server using Nginx.
 
-Let's edit the default homepage :
+For now, let's edit the default homepage. Navigate to page's directory by running the following command:
 
 ```bash
 cd /var/www/html
+```
+
+Open the file with Vim and edit the page as you wish (we are going to add the classic "hello world") :
+
+```bash
 vi index.html
 # add hello world save and exit
 ```
@@ -151,24 +159,32 @@ If you go back to the browser and refresh the page you should see :
 
 <Image src={hellownginorld} alt="server in" />
 
-{/* NGINX is great, but let's move into a domain, we are much more familiar with. We are going to use nodejs to host our application. The request will come to the server, Nginx will proxy it to the nodejs. */}
-
 ### Setup Nginx as a reverse proxy
 
-Web applications written in Node.js for example, can run with their own standalone server but they lack a number of advanced features like **load balancing**, **security**, etc.. Nginx can act as a reverse proxy while serving HTTP requests.
+As mentionned above, it's not a requirement to use a web server.<br/>
+Web applications written in Node.js for example, can run with their own standalone server. This means that the client can sends requests directly to the node server, and the server will respond to the client.
+However, they lack a number of advanced features like **load balancing**, **security**, etc..
 
 A reverse proxy is a server that retrieves resources for clients from one or more upstream servers.
 
-<Image src={ngninxrequestnode} alt="server in" />
+<Image src={reverseproxy} alt="server in" />
 
 A reverse proxy is the recommended way to expose an application server to the internet. Check out this very interesting <a target="_blank" href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/">article</a> to find more details.
 
-- First, let's install Node.js on our server :
+Nginx can act as a reverse proxy while serving HTTP requests.
+
+1. First, let's install Node.js on our server :
 
 > Here is the link to <a href="https://github.com/nodesource/distributions/blob/master/README.md#debinstall">
 > install node </a> on linux.
 
-1. Download and import the Nodesource GPG key :
+- SSH into your server
+
+```bash
+ssh root@<your_IP_address>
+```
+
+- Execute the following command to download and import the Nodesource GPG key :
 
 ```bash
 sudo apt-get update
@@ -177,61 +193,61 @@ sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 ```
 
-2. Create deb repository :
+- Create deb repository :
 
 ```bash
 NODE_MAJOR=20
 echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 ```
 
-3. Install node :
+- Install node :
 
 ```bash
 sudo apt-get update
 sudo apt-get install nodejs -y
 ```
 
-4. Install git (more on that later) :
+- Install git (more on that later) :
 
 ```bash
 sudo apt install git
 ```
 
-- Next, let's create a basic Node.js application :
+2. Next, let's create a basic Node.js application :
 
-1. Change ownership of `/www`
+- Change ownership of the directory `/www` :
 
 ```bash
 sudo chown -R $USER:$USER /var/www
 ```
 
-2. Make an application directory
+- Create a directory for the application call "app" :
 
 ```bash
 mkdir /var/www/app
 ```
 
-3. Initialize an empty git repository
+- Initialize a git repository
 
 ```bash
 cd app
 git init
 ```
 
-4. Initialize node modules :
+- Run the following command to create a new `package.json` file:
 
 ```bash
 npm init -y
 
 ```
 
-5. Create a file called `app.js`
+- Create a file called `app.js`
 
 ```bash
 vi app.js
 ```
 
-Copy-paste this :
+- Copy-paste this in `app.js` :
 
 ```vim
 const http = require('http')
@@ -246,11 +262,11 @@ server.listen(PORT)
 console.log(`server is listening to port ${PORT})
 ```
 
-- Next, let's setup proxy pass
+3. Next, we can setup proxy pass
 
 Proxy pass is an Nginx directive that allows us to route any request that comes to our web server to our node.js server.
 
-1. Create a configuration file (in my case `hk`) for your server
+- Create a configuration file (called `hk` for our example) for your server
 
 ```bash
 sudo vi /etc/nginx/sites-enabled/hk
@@ -271,9 +287,9 @@ server {
 }
 ```
 
-3. Save and exit!
+- Save and exit!
 
-This configuration file begins with a standard Nginx setup, where Nginx will listen on port 80 and respond to requests made to `<your_domain>`.
+This configuration file begins with making nginx listen on port 80 and respond to requests made to `<your_domain>`.
 
 The Reverse proxy functionality is enabled through Nginx’s `proxy_pass` directive. With this configuration, navigating to `<your_domain>` in your local web browser will be the same as opening `http://localhost:8000`.
 
@@ -283,21 +299,21 @@ While we will only proxy a single application server, Nginx is capable of servin
 
 By adding more location blocks as needed, a single server name can combine multiple application servers through proxy into one cohesive web application.
 
-- Finally, we're going to point Nginx to our new server.
+4. Finally, we're going to point Nginx to our new server.
 
-1. Open the file `nginx.conf` :
+- Open the file `nginx.conf` :
 
 ```bash
 sudo vi /etc/nginx/ngnix.conf
 ```
 
-2. Modify this line `/etc/nginx/sites-enabled/ ` making sure to replace `<server_config_file>` (`hk` in my case) :
+- Modify this line `/etc/nginx/sites-enabled/ ` making sure to replace `<server_config_file>` (`hk` in my case) :
 
 ```vim
 /etc/nginx/sites-enabled/<server_config_file>
 ```
 
-4. To validate your configuration file you can run the following command :
+- To validate your configuration file you can run the following command :
 
 ```bash
 nginx -t
@@ -307,7 +323,7 @@ If everything is correct you should get the following output:
 
 <Image src={nginxt} alt="server in" />
 
-5. Let's check Nginx status and restart Nginx :
+- check Nginx status and restart Nginx :
 
 ```bash
 sudo service nginx status
@@ -321,11 +337,11 @@ cd /var/www/app
 node app.js
 ```
 
-Refresh the page in the browser you should see the following:
+Navigate to your domain in the browser you should see the following:
 
 <Image src={noderunning} alt="server in" />
 
-Congratulations, Nginx is now configured as a reverse proxy for your application server.
+Congratulations! Nginx is now configured as a reverse proxy for your application server.
 With this in place, we can build a full web page, accessible via our domain (mine is **hkgetsit.tech**).
 
 To make sure our website stays up and running even when we close the shell or exit the terminal, we're going to install a program called **PM2**.
@@ -370,11 +386,11 @@ pm2 status
 
 <Image src={pm2status} alt="server in" />
 
-With this in place, if our server reboot, **pm2** is going to bring up our node app automatically.
+If our server reboot, **pm2** will bring up our node app automatically.
 
 ### Creating a git repo
 
-Right now, our node app is only accesible on the server. Let's create a git repository to be able to access our node js app on our local machine (in VS code).
+Right now, our node app is only accesible on the server. <br/> Let's create a git repository to be able to access our node js app on our local machine (in VS code).
 
 1. On <a href="https://github.com/">github</a> create a git repository
 
@@ -388,7 +404,7 @@ ssh-keygen
 3. Add the ssh key to github following <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account">
    these instructions:</a>
 
-4. Make sure you git uses your new SSH key
+4. Make sure git uses your new SSH key
 
 ```bash
 vi ~/.ssh/config
@@ -407,6 +423,8 @@ git push -u origin main
 
 We've pushed our code to github, if everything is working correctly, you should be able to pull the code from the repo to your local machine.
 
+In the next sections, we will go over different topics to get some familiarity with the entire process of building a full stack application.
+
 ## Security
 
 **What could someone do if they gain access to your server?** :
@@ -417,15 +435,15 @@ We've pushed our code to github, if everything is working correctly, you should 
 
 **How can we secure our application?** :
 
-Security is paramount when it comes to servers. These are some of the measures that we can take to protect our server. For example :
+Security is paramount when it comes to servers. To protect our server, we can :
 
-- Using SSH : We don't use password
-- Setup firewalls : A firewall restrict access to activities
-- Updates : Keep the software up to date because if there's a hack or a breach you want to ensure your software is always running the latest version
-- Two factor authentication
-- VPN
+- Use SSH for authentication
+- Setup firewalls to restrict access
+- Keep the software up to date because to ensure your software is always running the latest version
+- Use Two factor authentication
+- Use a VPN
 
-In the next section, we will focus on firewalls. But before getting into it, we need to understand what a port is. By defintion, a port is a communication endpoint that maps to specific process or network service. Ports are amazing because they allow us to run multiple services on one IP address. However, they are also an entry point for hackers because they are an opening to your computer.
+In the next section, we will focus on firewalls. But before we get into it, we need to understand what a port is. By defintion, a port is a communication endpoint that maps to specific process or network service. Ports are amazing because they allow us to run multiple services on one IP address. However, they are also an entry point for hackers because they are an opening to your computer.
 
 To take a look at the well known ports, run this command :
 
@@ -433,7 +451,7 @@ To take a look at the well known ports, run this command :
 less /etc/services
 ```
 
-Let's run these commands to take a look at the open ports on our machine. We can use a program called `nmap`. :
+We will use a program called `nmap`. :
 
 - Install nmap
 
